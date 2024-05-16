@@ -313,7 +313,7 @@ def edit_report(request, id):
     else:
         form = ReportForm(instance=entity)
     
-return render(request, "/api/edit_report.html", {'form': form})
+    return render(request, "/api/edit_report.html", {'form': form})
 
 
 def process_image(image, is_original):
