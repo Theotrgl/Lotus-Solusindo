@@ -437,7 +437,7 @@ def edit_item(request, SKU):
                 
                 # Update the item's image field with the new image path
                 form.instance.gambar = resized_image_name
-            
+
             if request.user.groups.filter(name='Admin').exists():
                 new_approved_raw = request.POST.get('is_approved', 'off')
                 new_approved = new_approved_raw == "on"
@@ -1058,6 +1058,7 @@ def upload_excel(request):
                 email_sumber_index = column_titles.index('email_sumber') if 'email_sumber' in column_titles else None
                 nama_sumber_index = column_titles.index('nama_sumber') if 'nama_sumber' in column_titles else None
                 pic_index = column_titles.index('pic') if 'pic' in column_titles else None
+                
                 # Find the row containing the 'Gambar' column title
                 gambar_row_index = None
                 for row_index, row in enumerate(worksheet.iter_rows(values_only=True)):
@@ -1455,7 +1456,9 @@ def prospect_ticket(request, prospect_id):
     prospect = get_object_or_404(Prospect, prospect_id=prospect_id)
     prospect_tickets = ProspectTicket.objects.filter(prospect_id=prospect).order_by('-date')
 
-    for prospect_ticket in prospect_tickets:
+    sorted_tickets = sorted(prospect_tickets, key=lambda x:(not x.open))
+
+    for prospect_ticket in sorted_tickets:
         prospect_ticket.sorted_logs = prospect_ticket.ticketlog_set.order_by('-date')
     
     ticket_log_form = TicketLogForm()
@@ -1469,7 +1472,7 @@ def prospect_ticket(request, prospect_id):
             ticket_log_form.save()
             return redirect(request.path)
 
-    context = {'prospect': prospect, 'prospect_id': prospect_id, 'prospect_tickets': prospect_tickets, 'ticket_log_form': ticket_log_form,}
+    context = {'prospect': prospect, 'prospect_id': prospect_id, 'prospect_tickets': sorted_tickets, 'ticket_log_form': ticket_log_form,}
 
     return render(request, 'prospect/prospect_ticket.html', context)
 

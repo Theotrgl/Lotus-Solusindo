@@ -1,10 +1,11 @@
 from django import forms
+from django.forms import widgets
+from django_select2.forms import Select2Widget
 from .models import *
 from django_select2.forms import Select2Widget
 from django.forms import widgets
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-
 
 class ReportForm(forms.ModelForm):
     def clean_DO(self):
@@ -24,6 +25,7 @@ class ReportForm(forms.ModelForm):
         exclude = ['id']
         widgets = {
             'sender': Select2Widget(attrs={'class': 'form-control'}),
+            'tiketId': forms.TextInput(attrs={'class': 'form-control', 'disabled' : 'disabled'}),
             'plat' : forms.TextInput(attrs={'class':'form-control', 'placeholder': 'BG 123 XY'}),
             'driver' : forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nama Driver'}),
             'PO' : forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'YY/MM/XXXX'}),
@@ -39,6 +41,7 @@ class ReportForm(forms.ModelForm):
             'og_foto' : forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
         }
         labels = {
+            'tiketId' : 'ID Tiket',
             'PO' : 'Nomor PO',
             'DO' : 'Nomor DO',
             'lokasi' : 'Lokasi Pemotongan',
@@ -55,4 +58,11 @@ class ReportForm(forms.ModelForm):
         widget=widgets.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control', 'placeholder': 'Timestamp'}),
         label='Timestamp',
         required=False
-    )
+      
+class ReportFilterForm(forms.Form):
+    sender_choices = [(sender["sender__username"], f"{sender['sender__first_name']}") for sender in Report.objects.values('sender__username', 'sender__first_name').distinct()]
+
+    sender = forms.ChoiceField(choices=[('', 'Select a Sender')] + sender_choices, required=False, widget=forms.Select(attrs={'class' : 'form-control'}))
+    start_date = forms.DateField(label='Start Date', required=False, widget=forms.DateInput(attrs={'type': 'date', 'class' : 'form-control'}))
+    end_date = forms.DateField(label='End Date', required=False, widget=forms.DateInput(attrs={'type': 'date', 'class' : 'form-control'}))
+

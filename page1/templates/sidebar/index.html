@@ -109,12 +109,11 @@
       </ul>
 
       <div class="sidebar-header">
-        <h3><a href="/" class="sidebar-a">Lotus Logging</a></h3>
+        <h3><a href="/api/dashboard" class="sidebar-a">Lotus Logging</a></h3>
       </div>
 
       <ul class="list-unstyled components">
-        <li><a class="sidebar-a" href="/">Dashboard</a></li>
-        {% if request.user|has_group:'GA' or request.user|has_group:'Admin'%}
+        <li><a class="sidebar-a" href="/api/dashboard">Dashboard</a></li>
         <li class="active">
           <a
             href="#reportSubmenu"
@@ -128,8 +127,12 @@
               <li><a class="sidebar-a" href="/api/display_report">Report</a></li>
               {% endif %}
           </ul>
+          <ul class="collapse list-unstyled show" id="reportSubmenu">
+              {% if request.user|has_group:'GA' or request.user|has_group:'Admin' %}
+              <li><a class="sidebar-a" href="/api/display_group">Edit Permissions</a></li>
+              {% endif %}
+          </ul>
         </li>
-        {% endif %}
       </ul>
 
       <ul class="list-unstyled CTAs">
