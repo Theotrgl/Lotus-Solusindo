@@ -25,6 +25,7 @@ from page1 import views
 urlpatterns = [
     path('', include("page1.urls")),
     path('api/', include("lik.urls")),
+    path('fiber/', include("ls_fiber.urls")),
     path('admin/', admin.site.urls),
     path('token/', 
           jwt_views.TokenObtainPairView.as_view(), 

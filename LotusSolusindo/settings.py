@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'page1',
     'lik',
+    'ls_fiber',
     'phonenumber_field',
     'django_select2',
     'djmoney',
