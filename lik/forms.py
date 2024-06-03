@@ -6,15 +6,22 @@ from .models import *
 class ReportForm(forms.ModelForm):
     def clean_DO(self):
         do = str(self.cleaned_data['DO']).replace(" ", "")  # Convert to string
-        if len(do) !=6:
-            raise forms.ValidationError("Nomor DO harus terdiri dari 6 karakter.")
+        if len(do) !=8:
+            raise forms.ValidationError("Nomor DO harus terdiri dari 8 karakter.")
         # Add spaces in the appropriate positions
-        return ' '.join([do[:3], do[3:]])
+        if len(do) == 6:
+            return ' '.join([do[:3], do[3:]])
+        else: 
+            return do
 
     def clean_no_tiket(self):
         no_tiket = str(self.cleaned_data['no_tiket']).replace(" ", "")
+        if len(no_tiket) != 6:
         # Add spaces in the appropriate positions
-        return ' '.join([no_tiket[:5], no_tiket[5:8], no_tiket[8:]])
+            return ' '.join([no_tiket[:5], no_tiket[5:8], no_tiket[8:]])
+        else: 
+            return no_tiket
+        
     class Meta:
         model = Report
         fields = '__all__'
