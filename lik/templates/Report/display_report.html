@@ -1,5 +1,4 @@
-{% extends 'base.html' %}
-{% load custom_filters %}
+{% extends 'base.html' %}{% load auth_extras %} {% load custom_filters %}
 
 <html>
   <head>
@@ -38,27 +37,27 @@
             id="columnSearch"
             placeholder="Search in selected column"
             class="form-control m-1"
-            style="width: 15%;"
+            style="width: 15%"
           />
           <button id="searchButton" class="btn btn-primary mr-1">Search</button>
           <button id="resetButtonCol" class="btn btn-secondary mr-2">
             Reset
           </button>
-            <select id="timestampRange" class="form-control btn-info mr-2">
-              <option value="">Select Timestamp</option>
-              <option value="today">Today</option>
-              <option value="yesterday">Yesterday</option>
-              <option value="1-10">1-10 of This Month</option>
-              <option value="11-20">11-20 of This Month</option>
-              <option value="21-eom">21 to End of This Month</option>
-              <option value="7">Last 7 days</option>
-              <option value="30">Last 30 days</option>
-              <option value="60">Last 60 days</option>
-              <option value="90">Last 90 days</option>
-              <option value="ytd">Current year to date</option>
-              <option value="365">Last 1 year (365 days)</option>
-              <option value="730">Last 2 years (730 days)</option>
-            </select>
+          <select id="timestampRange" class="form-control btn-info mr-2">
+            <option value="">Select Timestamp</option>
+            <option value="today">Today</option>
+            <option value="yesterday">Yesterday</option>
+            <option value="1-10">1-10 of This Month</option>
+            <option value="11-20">11-20 of This Month</option>
+            <option value="21-eom">21 to End of This Month</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="60">Last 60 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="ytd">Current year to date</option>
+            <option value="365">Last 1 year (365 days)</option>
+            <option value="730">Last 2 years (730 days)</option>
+          </select>
           <button id="filterDuplicatesButton" class="btn btn-warning">
             Check Duplicates
           </button>
@@ -69,13 +68,21 @@
 
         <div class="form-inline mb-2">
           <label class="mr-2" for="startDate">Start Date:</label>
-          <input type="date" id="startDate" class="form-control mr-2" style="width: 15%;" />
+          <input
+            type="date"
+            id="startDate"
+            class="form-control mr-2"
+            style="width: 15%"
+          />
           <label class="mr-2" for="endDate">End Date:</label>
-          <input type="date" id="endDate" class="form-control mr-2" style="width: 15%;"/>
+          <input
+            type="date"
+            id="endDate"
+            class="form-control mr-2"
+            style="width: 15%"
+          />
 
-          <button id="filterButton" class="btn btn-primary mr-2">
-            Apply
-          </button>
+          <button id="filterButton" class="btn btn-primary mr-2">Apply</button>
 
           <select id="dateRange" class="form-control btn-info">
             <option value="">Select Date Range</option>
@@ -134,7 +141,7 @@
         </thead>
         <tbody class="tbody">
           {% for report in entities %}
-          <tr>
+          <tr {% if report.completed %} style="background-color: #ccffc7" {% endif %} >
             {% if report.date_time %}
             <td>{{ report.date_time|date:"Y/m/d H:i:s" }}</td>
             {% else %}
@@ -183,6 +190,8 @@
     <script>
       var table;
       function initializeDataTable() {
+        var isAdmin = "{{ request.user|has_group:'Admin' }}";
+        var isGA = "{{ request.user|has_group:'GA' }}";
         table = new DataTable("#likTable", {
           select: {
             style: "multi",
@@ -228,6 +237,16 @@
                     className: "btn-danger",
                     action: deleteSelectedRows,
                   },
+                  {
+                    text: "{% if request.user|has_group:'Admin' or request.user|has_group:'GA' %} Complete {% endif %}",
+                    className: "btn-success",
+                    action: completeRows,
+                    init: function (api, node, config) {
+                      if (isAdmin === "False" && isGA === "False") {
+                        $(node).addClass("d-none");
+                      }
+                    },
+                  },
                   { extend: "colvis", className: "btn-info" },
                 ],
                 dom: {
@@ -241,7 +260,7 @@
           },
         });
       }
-      
+
       function deleteSelectedRows() {
         if (!table) {
           console.error("Table is not initialized.");
@@ -279,6 +298,50 @@
             },
             error: function (xhr, status, error) {
               alert("Error deleting selected rows: " + error);
+            },
+          });
+        }
+      }
+
+      function completeRows() {
+        if (!table) {
+          console.error("Table is not initialized.");
+          return;
+        }
+        var selectedIDs = table
+          .rows(".selected")
+          .data()
+          .toArray()
+          .map((row) => row[1]);
+        console.log(selectedIDs);
+        selectedIDs.forEach(function (value) {
+          console.log("selected_ids[]:", value);
+        });
+        if (selectedIDs.length === 0) {
+          alert("Please select at least one row to complete.");
+          return;
+        }
+
+        if (confirm("Are you sure you want to complete the selected rows?")) {
+          const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0]
+            .value;
+          $.ajax({
+            url: '{% url "complete_selected_rows" %}',
+            type: "POST",
+            data: { selected_ids: selectedIDs, csrfmiddlewaretoken: csrfToken },
+            dataType: "json",
+            success: function (response) {
+              if (response.success) {
+                // Reload or update the table after successful deletion
+                location.reload(); // Assuming you're using AJAX to populate the table
+                // Optionally, provide feedback to the user
+                alert("Selected rows completed.");
+              } else {
+                alert("Error completing selected rows: " + response.error);
+              }
+            },
+            error: function (xhr, status, error) {
+              alert("Error completing selected rows: " + error);
             },
           });
         }
@@ -589,7 +652,6 @@
           }
           filterByTimestamp(startDate, endDate);
         });
-
 
         function formatDate(date) {
           var year = date.getFullYear();

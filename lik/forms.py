@@ -6,8 +6,8 @@ from .models import *
 class ReportForm(forms.ModelForm):
     def clean_DO(self):
         do = str(self.cleaned_data['DO']).replace(" ", "")  # Convert to string
-        if len(do) !=8:
-            raise forms.ValidationError("Nomor DO harus terdiri dari 8 karakter.")
+        if len(do)!=8 and len(do)!=6:
+            raise forms.ValidationError("Nomor DO harus terdiri dari 6 / 8 karakter.")
         # Add spaces in the appropriate positions
         if len(do) == 6:
             return ' '.join([do[:3], do[3:]])

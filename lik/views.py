@@ -20,6 +20,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .forms import *
 from .models import *
 from .serializers import *
+from page1.decorators import *
 
 # Django imports
 from django.conf import settings
@@ -35,6 +36,8 @@ from django.db.models.functions import ExtractDay, ExtractMonth, ExtractYear, Up
 
 
 # -------------------- Dashboard --------------------#
+@login_required
+@GA_required
 def dashboard(request):
     form = ReportFilterForm(request.GET)
 
@@ -199,6 +202,8 @@ def dashboard(request):
 
 
 # -------------------- Common Functions --------------------#
+@login_required
+@GA_required
 def delete_selected_rows(request, model, key):
     if request.method == 'POST':
         selected_ids = request.POST.getlist('selected_ids[]')  # Assuming you're sending an array of selected IDs
@@ -224,6 +229,8 @@ def delete_selected_rows(request, model, key):
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
+@login_required
+@GA_required
 def add_entity_view(request, entity_form, template_name, redirect_template, initial = None):
     entity_form_instance = entity_form(request.POST or None)
     if request.method == 'POST':
@@ -241,6 +248,8 @@ def add_entity_view(request, entity_form, template_name, redirect_template, init
 
     return render(request, template_name, {'entity_form': entity_form_instance})
 
+@login_required
+@GA_required
 def entity_detail(request, entity_model, entity_form, entity_id_field, entity_id, template_name, extra_context=None):
     entity = get_object_or_404(entity_model, **{entity_id_field: entity_id})
     form = entity_form(instance=entity)
@@ -251,6 +260,8 @@ def entity_detail(request, entity_model, entity_form, entity_id_field, entity_id
 
     return render(request, template_name, context)
 
+@login_required
+@GA_required
 def delete_entity(request, entity_model, entity_id_field, entity_id):
     entity = get_object_or_404(entity_model, **{entity_id_field: entity_id})
 
@@ -260,6 +271,8 @@ def delete_entity(request, entity_model, entity_id_field, entity_id):
     else:
         return JsonResponse({'success': False, 'message': 'Invalid request method'})
     
+@login_required
+@GA_required
 def edit_entity(request, entity_model, entity_form, entity_id_field, entity_id):
     entity = get_object_or_404(entity_model, **{entity_id_field: entity_id})
 
@@ -306,10 +319,27 @@ def display_report(request):
     return render(request, 'Report/display_report.html', {'entities': entities})
 
 @login_required
+@GA_required
 def delete_selected_rows_report(request):
     return delete_selected_rows(request, Report, 'id')
 
 @login_required
+@GA_required
+def complete_selected_rows(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_ids[]')  # Assuming you're sending an array of selected IDs
+        try:
+            selected_items = Report.objects.filter(**{f'{"id"}__in': selected_ids})
+            selected_items.update(completed = True)  # Delete the selected rows from the database
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@login_required
+@GA_required
 def add_report(request, initial=None):
     entity_form_instance = ReportForm(request.POST or None, request.FILES or None)
     if request.method == 'POST':
@@ -539,6 +569,7 @@ def check_token(request, user_id):
 
 # -------------------- Admin Change Groups --------------------#
 @login_required
+@Admin_Only
 def display_group(request):
     group_lokasi = Group_Lokasi.objects.all()
     group_tujuan = Group_Tujuan.objects.all()

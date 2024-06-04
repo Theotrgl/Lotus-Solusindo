@@ -22,6 +22,8 @@ class Report(models.Model):
     og_foto = models.ImageField(upload_to = 'report_photos/', null=True, blank=True)
     #Timestamp
     date_time = models.DateTimeField(null = True)
+    # Completed
+    completed = models.BooleanField(default=False)
 
     def __str__ (self):
         return str(self.no_tiket)
