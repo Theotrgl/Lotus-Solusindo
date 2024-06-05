@@ -340,6 +340,21 @@ def complete_selected_rows(request):
 
 @login_required
 @GA_required
+def uncomplete_selected_rows(request):
+    if request.method == 'POST':
+        selected_ids = request.POST.getlist('selected_ids[]')  # Assuming you're sending an array of selected IDs
+        try:
+            selected_items = Report.objects.filter(**{f'{"id"}__in': selected_ids})
+            selected_items.update(completed = False)  # Delete the selected rows from the database
+
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+@login_required
+@GA_required
 def add_report(request, initial=None):
     entity_form_instance = ReportForm(request.POST or None, request.FILES or None)
     if request.method == 'POST':

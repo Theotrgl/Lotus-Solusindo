@@ -42,6 +42,7 @@ class ReportForm(forms.ModelForm):
             'reject' : forms.NumberInput(attrs={'class': 'form-control', 'placeholder': '100, 200, ...'}),
             'foto' : forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
             'og_foto' : forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
+            'completed': forms.CheckboxInput(attrs={'class': 'form-control'}),
         }
         labels = {
             'tiketId' : 'ID Tiket',
@@ -56,6 +57,7 @@ class ReportForm(forms.ModelForm):
             'reject' : 'Reject (kg)',
             'foto' : 'Thumbnail',
             'og_foto' : 'Submitted Photo',
+            'completed' : 'Complete',
         }
     date_time = forms.DateTimeField(
         widget=widgets.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control', 'placeholder': 'Timestamp'}),

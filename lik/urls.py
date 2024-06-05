@@ -6,6 +6,7 @@ urlpatterns = [
     path('display_report/', display_report, name='display_report'),
     path('delete_selected_rows_report/', delete_selected_rows_report, name='delete_selected_rows_report'),
     path('complete_selected_rows/', complete_selected_rows, name='complete_selected_rows'),
+    path('uncomplete_selected_rows/', uncomplete_selected_rows, name='uncomplete_selected_rows'),
     path('add_report/', add_report, name='add_report'),
     path('report_detail/<int:id>/', report_detail, name='report_detail'),
     path('edit_report/<int:id>/', edit_report, name='edit_report'),
