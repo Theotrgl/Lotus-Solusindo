@@ -500,10 +500,6 @@ class GroupTujuanListAPIView(generics.ListAPIView):
 # @permission_classes([IsAuthenticated])
 class GroupKayuListAPIView(generics.ListAPIView):
     serializer_class = KayuSerializer
-
-# @permission_classes([IsAuthenticated])
-class GroupKayuListAPIView(generics.ListAPIView):
-    serializer_class = KayuSerializer
     def get_queryset(self):
         group_id = self.kwargs['group_id']
         group_kayus = Group_Kayu.objects.filter(group_id=group_id)
