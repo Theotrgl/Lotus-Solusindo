@@ -231,3 +231,21 @@ class add_job_mobile(generics.CreateAPIView):
             return Response({'error': 'Client not found'}, status=status.HTTP_404_NOT_FOUND)
         
         return super().post(request, *args, **kwargs)
+    
+class add_worker_mobile(generics.CreateAPIView):
+    serializer_class = WorkerSerializer
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            worker = serializer.save()
+            return Response({'worker_id': worker.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class get_worker(generics.ListAPIView):
+    queryset = Worker.objects.all()
+    serializer_class = WorkerSerializer
+
+    def get_queryset(self):
+        return Worker.objects.all()
