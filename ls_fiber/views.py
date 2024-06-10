@@ -231,6 +231,16 @@ class add_job_mobile(generics.CreateAPIView):
             return Response({'error': 'Client not found'}, status=status.HTTP_404_NOT_FOUND)
         
         return super().post(request, *args, **kwargs)
+
+@api_view(['GET'])
+def fetch_client_list(request):
+    clients = Client.objects.all()
+    serializer = ClientSerializer(clients, many=True)
+    return Response(serializer.data)
+
+class ClientListAPIView(generics.ListAPIView):
+    serializer_class = ClientSerializer
+    queryset = Client.objects.all()
     
 class add_worker_mobile(generics.CreateAPIView):
     serializer_class = WorkerSerializer
