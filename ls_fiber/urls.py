@@ -5,6 +5,7 @@ urlpatterns = [
     path('login_user/', login_user, name="login_user"),
     path('logout_user/', logout_user, name="logout_user"),
     path('fetch_client_list/', fetch_client_list, name="fetch_client_list"),
+    path('fetch_worker_list/', fetch_worker_list, name="fetch_worker_list"),
     path('add_client_mobile/', add_client_mobile.as_view(), name="add_client_mobile"),
     path('add_job_mobile/<int:client_id>/', add_job_mobile.as_view(), name="add_job_mobile"),
     path('add_client_PIC_mobile/<int:client_id>/', add_client_PIC_mobile.as_view(), name="add_client_PIC_mobile"),

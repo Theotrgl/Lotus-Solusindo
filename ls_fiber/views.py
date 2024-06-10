@@ -241,7 +241,7 @@ def fetch_client_list(request):
 class ClientListAPIView(generics.ListAPIView):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
-    
+
 class add_worker_mobile(generics.CreateAPIView):
     serializer_class = WorkerSerializer
     
@@ -252,6 +252,11 @@ class add_worker_mobile(generics.CreateAPIView):
             return Response({'worker_id': worker.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def fetch_worker_list(request):
+    workers = Worker.objects.all()
+    serializer = WorkerSerializer(workers, many=True)
+    return Response(serializer.data)
 
 class get_worker(generics.ListAPIView):
     queryset = Worker.objects.all()
