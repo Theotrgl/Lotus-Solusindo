@@ -20,6 +20,11 @@ class ClientSerializer(serializers.ModelSerializer):
         model = Client
         fields = '__all__'  # Adjust fields as needed
 
+class ClientNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Client
+        fields = ['namaPelanggan']
+
 class ClientPICSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientPIC
