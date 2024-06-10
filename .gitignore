@@ -36,6 +36,8 @@ page1/migrations/*
 !page1/migrations/__init__.py
 lik/migrations/*
 !lik/migrations/__init__.py
+ls_fiber/migrations/*
+!ls_fiber/migrations/__init__.py
 !migrations/.gitkeep
 
 # Optionally, ignore migration .pyc files (byte-compiled Python files)

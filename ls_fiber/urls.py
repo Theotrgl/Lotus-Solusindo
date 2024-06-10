@@ -9,5 +9,7 @@ urlpatterns = [
     path('add_job_mobile/<int:client_id>/', add_job_mobile.as_view(), name="add_job_mobile"),
     path('add_client_PIC_mobile/<int:client_id>/', add_client_PIC_mobile.as_view(), name="add_client_PIC_mobile"),
     path('add_client_address_mobile/<int:client_id>/', add_client_address_mobile.as_view(), name="add_client_address_mobile"),
+    path('add_worker_mobile/', add_worker_mobile.as_view(), name="add_worker_mobile"),
+    path('get_worker/', get_worker.as_view(), name="get_worker"),
 ]
 
