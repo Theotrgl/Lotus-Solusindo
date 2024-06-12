@@ -9,6 +9,7 @@ from itertools import groupby
 from operator import itemgetter
 from PIL import Image, ImageFile
 from collections import defaultdict
+from django.urls import reverse
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
@@ -78,6 +79,26 @@ def add_entity_view(request, entity_form, template_name, redirect_template, init
 
     return render(request, template_name, {'entity_form': entity_form_instance})
 
+def add_entity(request, entity_id, entity_model, form_class, template_name, entity_field, entity_form_field, initial_data=None, redirect_url = None):
+    entity = get_object_or_404(entity_model, **{entity_field: entity_id})
+
+    if request.method == 'POST':
+        form = form_class(request.POST)
+        if form.is_valid():
+            setattr(form.instance, entity_form_field, entity)
+            form.save()
+            if redirect_url:
+                return redirect(redirect_url)
+    else:
+        form = form_class(initial=initial_data)
+
+    return render(request, template_name, {'entity': entity, 'form': form, 'entity_id': entity_id})
+
+@login_required
+def display_entities(request, entity_model, template_name):
+    entities = entity_model.objects.all()
+    return render(request, template_name, {'entities': entities})
+
 def entity_detail(request, entity_model, entity_form, entity_id_field, entity_id, template_name, extra_context=None):
     entity = get_object_or_404(entity_model, **{entity_id_field: entity_id})
     form = entity_form(instance=entity)
@@ -92,6 +113,20 @@ def delete_entity(request, entity_model, entity_id_field, entity_id):
     entity = get_object_or_404(entity_model, **{entity_id_field: entity_id})
 
     if request.method == 'POST':
+        # Additional logic for image deletion if applicable
+        if hasattr(entity, 'lampiran') and hasattr(entity, 'lampiran_og'):
+            image_path = os.path.join(settings.MEDIA_ROOT, str(entity.lampiran))
+            og_image_path = os.path.join(settings.MEDIA_ROOT, str(entity.lampiran_og))
+            if os.path.exists(image_path):
+                os.remove(image_path)
+            else:
+                print(f"Image file not found: {image_path}")
+                
+            if os.path.exists(og_image_path):
+                os.remove(og_image_path)
+            else:
+                print(f"Original image file not found: {og_image_path}")
+
         entity.delete()
         return JsonResponse({'success': True})
     else:
@@ -328,11 +363,15 @@ def display_lampiran(request, url):
 
 @login_required
 def fiber_detail(request, id):
-    return entity_detail(request, JobDetail, JobForm, 'id', id, 'Report/report_detail.html')
+    return entity_detail(request, JobDetail, JobForm, 'id', id, 'Fiber/fiber_detail.html')
 
 @login_required
 def delete_selected_rows_fiber(request):
     return delete_selected_rows(request, JobDetail, 'id')
+
+@login_required
+def delete_selected_rows_client(request):
+    return delete_selected_rows(request, Client, 'id')
 
 @api_view(['GET'])
 def check_token(request, user_id):
@@ -346,3 +385,100 @@ def check_token(request, user_id):
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
+@login_required
+def edit_fiber(request, id):
+    entity = get_object_or_404(JobDetail,id = id)
+
+    if request.method == 'POST':
+        form = JobDetail(request.POST, request.FILES, instance=entity)
+        
+        if form.is_valid():
+            # Check if a new image file is provided
+            foto = request.FILES.get('lampiran')
+            og_foto = request.FILES.get('lampiran_og')
+
+            if foto:
+                resized_foto_path = process_image(foto, False)
+                form.instance.foto = resized_foto_path
+            if og_foto:
+                resized_og_foto_path = process_image(og_foto, True)
+                form.instance.og_foto = resized_og_foto_path
+
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        form = JobForm(instance=entity)
+    
+    return render(request, "/fiber/edit_fiber.html", {'form': form})
+
+def process_image(image, is_original):
+    upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    img = Image.open(image)
+
+    # Generate a unique identifier
+    unique_id = str(uuid.uuid4())[:8]  # Use the first 8 characters of a UUID
+    
+    # Strip file extension from the image filename
+    image_name_without_extension, extension = os.path.splitext(image.name)
+    
+    # Resize the image
+    if is_original:
+        resized_img = img.resize((500, 500))
+    else:
+        resized_img = img.resize((100, 100))
+    
+    # Construct the resized image name
+    if is_original:
+        resized_image_name = f"original-{upload_date}-{unique_id}-{extension}"
+    else:
+        resized_image_name = f"resized-{upload_date}-{unique_id}-{extension}"
+    
+    # Save the resized image
+    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'report_photos', resized_image_name)
+    resized_img.save(resized_image_path)
+
+    relative_path = os.path.relpath(resized_image_path, settings.MEDIA_ROOT )
+    
+    return relative_path
+
+@login_required
+def delete_fiber(request, id):
+    return delete_entity(request, JobDetail, 'id', id)
+
+@login_required
+def display_fiber_client(request):
+    return display_entities(request, Client, 'Client/display_client.html')
+
+@login_required
+def client_detail(request, id):
+    return entity_detail(request, Client, ClientForm, 'id', id, 'Client/client_detail.html')
+
+@login_required
+def edit_client(request, id):
+    return edit_entity(request, Client, ClientForm, 'id', id)
+
+@login_required
+def delete_client(request, id):
+    return delete_entity(request, Client, 'id', id)
+
+@login_required
+def edit_client_pic(request, id):
+    pic = get_object_or_404(ClientPIC, id=id)
+    form = ClientPICForm(request.POST or None, instance=pic)
+
+    if request.method == 'POST':
+        if form.is_valid():
+            form.save()
+            return redirect('client_detail', id=pic.client_id.pk)
+    return render(request, 'Client/edit_client_pic.html', {'form': form, 'pic': pic})
+
+@login_required
+def add_client_pic(request, id):
+    redirect_url  = reverse('client_detail', args=(id,))
+    return add_entity(request, id, Client, ClientPICForm, 'Client_PIC/add_client_pic.html', 'id', 'id', {'id': id}, redirect_url=redirect_url)
+
+@login_required
+def delete_client_pic(request, id):
+    return delete_entity(request, ClientPIC, 'id', id)
