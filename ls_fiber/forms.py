@@ -10,16 +10,24 @@ class JobForm(forms.ModelForm):
         fields = '__all__'
 
         widgets = {
+            'sender' : Select2Widget(attrs={'class': 'form-control'}),
             'client' : Select2Widget(attrs={'class': 'form-control'}),
-            'jenis_pekerjaan' : Select2Widget(attrs={'class': 'form-control'}),
-            'kategori_pelayanan' : Select2Widget(attrs={'class': 'form-control'}),
-            'jenis_layanan' : Select2Widget(attrs={'class': 'form-control'}),
+            'tanggal': forms.DateInput(attrs={'class': 'form-control'}),
+            'jenisPekerjaan' : Select2Widget(attrs={'class': 'form-control'}),
+            'kategoriPelayanan' : Select2Widget(attrs={'class': 'form-control'}),
+            'jenisLayanan' : Select2Widget(attrs={'class': 'form-control'}),
             'action' : forms.TextInput(attrs={'class':'form-control'}),
             'keterangan' : forms.TextInput(attrs={'class':'form-control'}),
             'gps' : forms.TextInput(attrs={'class':'form-control'}),
             'ssid' : forms.TextInput(attrs={'class':'form-control'}),
             'signal' : forms.TextInput(attrs={'class':'form-control'}),
             'freq' : forms.TextInput(attrs={'class':'form-control'}),
+            'status' : forms.TextInput(attrs={'class':'form-control'}),
+            'perangkatInstall' : forms.TextInput(attrs={'class':'form-control'}),
+            'perangkatDismantle' : forms.TextInput(attrs={'class':'form-control'}),
+            'jamMulai' : forms.TimeInput(attrs={'class':'form-control'}),
+            'jamSelesai' : forms.TimeInput(attrs={'class':'form-control'}),
+            'pelaksanaPekerjaan' : forms.Textarea(attrs={'class':'form-control'}),
         }
 
 
