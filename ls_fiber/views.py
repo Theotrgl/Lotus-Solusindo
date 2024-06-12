@@ -2,7 +2,7 @@
 import os
 import json
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 # Third-party imports
 from itertools import groupby
@@ -42,10 +42,10 @@ def delete_selected_rows(request, model, key):
             selected_items = model.objects.filter(**{f'{key}__in': selected_ids})
 
             # Additional logic for image deletion if applicable
-            if hasattr(model, 'foto') and hasattr(model, 'og_foto'):
+            if hasattr(model, 'lampiran') and hasattr(model, 'lampiran_og'):
                 for item in selected_items:
-                    image_path = os.path.join(settings.MEDIA_ROOT, str(item.foto))
-                    og_image_path = os.path.join(settings.MEDIA_ROOT, str(item.og_foto))
+                    image_path = os.path.join(settings.MEDIA_ROOT, str(item.lampiran))
+                    og_image_path = os.path.join(settings.MEDIA_ROOT, str(item.lampiran_og))
                     if os.path.exists(image_path) and os.path.exists(og_image_path):
                         os.remove(image_path)
                         os.remove(og_image_path)
@@ -264,3 +264,58 @@ class get_worker(generics.ListAPIView):
 
     def get_queryset(self):
         return Worker.objects.all()
+
+@login_required
+def display_fiber(request):
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    start_date_str_ts = request.GET.get('start_date_ts')
+    end_date_str_ts = request.GET.get('end_date_ts')
+
+    if start_date_str_ts and end_date_str_ts:
+        # Parse the date strings into naive datetime objects
+        start_date_naive = datetime.strptime(start_date_str_ts, '%Y-%m-%d')
+        end_date_naive = datetime.strptime(end_date_str_ts, '%Y-%m-%d') + timedelta(days=1) - timedelta(seconds=1)
+        # Make the naive datetime objects timezone-aware
+        start_date = timezone.make_aware(start_date_naive, timezone.get_current_timezone())
+        end_date = timezone.make_aware(end_date_naive, timezone.get_current_timezone())
+        print(start_date, end_date)
+
+        # Filter reports based on the timezone-aware datetime range
+        entities = JobDetail.objects.filter(date_time__range=(start_date, end_date))
+    elif start_date_str and end_date_str:
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d') + timedelta(days=1) - timedelta(seconds=1)
+        entities = JobDetail.objects.filter(tanggal__range=[start_date, end_date])
+    else:
+        entities = JobDetail.objects.all()
+
+    return render(request, 'Fiber/display_fiber.html', {'entities': entities})
+
+@login_required
+def display_lampiran(request, url):
+    # Get the URL parameter 'url' from the request
+
+    # Render the display_image.html template with the image_url context variable
+    return render(request, 'Fiber/display_lampiran.html', {'url': url})
+
+@login_required
+def fiber_detail(request, id):
+    return entity_detail(request, JobDetail, JobForm, 'id', id, 'Report/report_detail.html')
+
+@login_required
+def delete_selected_rows_fiber(request):
+    return delete_selected_rows(request, JobDetail, 'id')
+
+@api_view(['GET'])
+def check_token(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+        try:
+            user_token = Token.objects.get(user=user)
+            return Response({"token": user_token.key}, status=status.HTTP_200_OK)
+        except Token.DoesNotExist:
+            return Response({"token": ""}, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
