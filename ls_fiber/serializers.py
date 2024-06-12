@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 import json
 
 from .models import *
+from page1.models import Provinsi, Kota, Kecamatan, Kelurahan, KodePos
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -49,3 +50,28 @@ class JobDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = JobDetail
         fields = '__all__' 
+
+class ProvinsiSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Provinsi
+        fields = '__all__'
+
+class KotaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Kota
+        fields = '__all__'
+
+class KecamatanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Kecamatan
+        fields = '__all__'
+
+class KelurahanSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Kelurahan
+        fields = '__all__'
+
+class KodePosSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KodePos
+        fields = '__all__'

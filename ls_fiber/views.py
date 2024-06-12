@@ -21,6 +21,7 @@ from rest_framework.decorators import api_view, permission_classes
 from .forms import *
 from .models import *
 from .serializers import *
+from page1.models import Provinsi, Kota, Kecamatan, Kelurahan, KodePos
 
 # Django imports
 from django.conf import settings
@@ -258,13 +259,38 @@ def fetch_worker_list(request):
     serializer = WorkerSerializer(workers, many=True)
     return Response(serializer.data)
 
-class get_worker(generics.ListAPIView):
-    queryset = Worker.objects.all()
-    serializer_class = WorkerSerializer
+class ProvinsiListView(generics.ListAPIView):
+    queryset = Provinsi.objects.all()
+    serializer_class = ProvinsiSerializer
+
+class KotaListView(generics.ListAPIView):
+    serializer_class = KotaSerializer
 
     def get_queryset(self):
-        return Worker.objects.all()
+        provinsi_id = self.kwargs['provinsi_id']
+        return Kota.objects.filter(provinsi_id=provinsi_id)
 
+class KecamatanListView(generics.ListAPIView):
+    serializer_class = KecamatanSerializer
+
+    def get_queryset(self):
+        kota_id = self.kwargs['kota_id']
+        return Kecamatan.objects.filter(kota_id=kota_id)
+    
+class KelurahanListView(generics.ListAPIView):
+    serializer_class = KelurahanSerializer
+
+    def get_queryset(self):
+        kecamatan_id = self.kwargs['kecamatan_id']
+        return Kelurahan.objects.filter(kecamatan_id=kecamatan_id)
+    
+class KodePosListView(generics.ListAPIView):
+    serializer_class = KodePosSerializer 
+  
+    def get_queryset(self):
+        kelurahan_id = self.kwargs['kelurahan_id']
+        return KodePos.objects.filter(kelurahan_id=kelurahan_id)
+      
 @login_required
 def display_fiber(request):
     start_date_str = request.GET.get('start_date')
@@ -319,3 +345,4 @@ def check_token(request, user_id):
             return Response({"token": ""}, status=status.HTTP_200_OK)
     except User.DoesNotExist:
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+

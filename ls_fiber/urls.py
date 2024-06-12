@@ -17,5 +17,10 @@ urlpatterns = [
     path('fiber_detail/<int:id>/', fiber_detail, name="fiber_detail"),
     path('delete_selected_rows_fiber/', delete_selected_rows_fiber, name='delete_selected_rows_fiber'),
     path('check_token/<int:user_id>/', check_token, name='check_token'),
+    path('provinsi/', ProvinsiListView.as_view(), name='provinsi-list'),
+    path('provinsi/<int:provinsi_id>/kota/', KotaListView.as_view(), name='kota-list'),
+    path('kota/<int:kota_id>/kecamatan/', KecamatanListView.as_view(), name='kecamatan-list'),
+    path('kecamatan/<int:kecamatan_id>/kelurahan/', KelurahanListView.as_view(), name='kelurahan-list'),
+    path('kelurahan/<int:kelurahan_id>/kodepos/', KodePosListView.as_view(), name='kodepos-list'),
 ]
 
