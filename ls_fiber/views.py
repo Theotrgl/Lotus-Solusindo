@@ -229,7 +229,7 @@ class add_job_mobile(generics.CreateAPIView):
 
         # Ensure pelaksanaPekerjaan is passed as a list
         pelaksana_pekerjaan = self.request.data.getlist('pelaksanaPekerjaan')
-        serializer.validated_data['pelaksanaPekerjaan'] = pelaksana_pekerjaan
+        serializer.validated_data['pelaksanaPekerjaan'] = ", ".join(pelaksana_pekerjaan)
 
         # Handle file uploads
         lampiran = self.request.FILES.get('lampiran')
@@ -441,11 +441,42 @@ def check_token(request, user_id):
         return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 @login_required
+def add_fiber(request, initial=None):
+    entity_form_instance = JobForm(request.POST or None, request.FILES or None)
+    if request.method == 'POST':
+        form = JobForm(request.POST, request.FILES)
+        if form.is_valid():
+            report = form.save(commit=False)
+            foto = request.FILES.get('lampiran')
+            og_foto = request.FILES.get('lampiran_og')
+
+            if foto:
+                resized_foto_path = process_image(foto, False)
+                form.instance.foto = resized_foto_path
+                report.save()
+            if og_foto:
+                resized_og_foto_path = process_image(og_foto, True)
+                form.instance.og_foto = resized_og_foto_path
+                report.save()
+
+            report.save()
+            return redirect('display_fiber')
+    else:
+        print(initial)
+        if (initial):
+            form = (JobForm(initial=initial))
+            entity_form_instance = form
+        else: 
+            form = JobForm()
+
+    return render(request, 'Fiber/add_fiber.html', {'entity_form': entity_form_instance})
+
+@login_required
 def edit_fiber(request, id):
     entity = get_object_or_404(JobDetail,id = id)
 
     if request.method == 'POST':
-        form = JobDetail(request.POST, request.FILES, instance=entity)
+        form = JobForm(request.POST, request.FILES, instance=entity)
         
         if form.is_valid():
             # Check if a new image file is provided
@@ -466,7 +497,7 @@ def edit_fiber(request, id):
     else:
         form = JobForm(instance=entity)
     
-    return render(request, "/fiber/edit_fiber.html", {'form': form})
+    return render(request, "Fiber/edit_fiber.html", {'form': form})
 
 def process_image(image, is_original):
     upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
@@ -491,7 +522,7 @@ def process_image(image, is_original):
         resized_image_name = f"resized-{upload_date}-{unique_id}-{extension}"
     
     # Save the resized image
-    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'report_photos', resized_image_name)
+    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'fiber_photos', resized_image_name)
     resized_img.save(resized_image_path)
 
     relative_path = os.path.relpath(resized_image_path, settings.MEDIA_ROOT )
@@ -508,7 +539,13 @@ def display_fiber_client(request):
 
 @login_required
 def client_detail(request, id):
-    return entity_detail(request, Client, ClientForm, 'id', id, 'Client/client_detail.html')
+    client_pics = ClientPIC.objects.filter(client_id=id)
+    extra_context = {'client_pics':client_pics}
+    return entity_detail(request, Client, ClientForm, 'id', id, 'Client/client_detail.html', extra_context)
+
+@login_required
+def add_client(request):
+    return add_entity_view(request, ClientForm, 'Client/add_client.html', 'display_fiber_client')
 
 @login_required
 def edit_client(request, id):
@@ -527,12 +564,12 @@ def edit_client_pic(request, id):
         if form.is_valid():
             form.save()
             return redirect('client_detail', id=pic.client_id.pk)
-    return render(request, 'Client/edit_client_pic.html', {'form': form, 'pic': pic})
+    return render(request, 'Client_PIC/edit_client_pic.html', {'form': form, 'pic': pic})
 
 @login_required
 def add_client_pic(request, id):
     redirect_url  = reverse('client_detail', args=(id,))
-    return add_entity(request, id, Client, ClientPICForm, 'Client_PIC/add_client_pic.html', 'id', 'id', {'id': id}, redirect_url=redirect_url)
+    return add_entity(request, id, Client, ClientPICForm, 'Client_PIC/add_client_pic.html', 'id', 'client_id', {'client_id': id}, redirect_url=redirect_url)
 
 @login_required
 def delete_client_pic(request, id):

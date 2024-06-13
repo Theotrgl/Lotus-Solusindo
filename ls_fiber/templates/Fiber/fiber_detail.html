@@ -17,7 +17,7 @@
           <form
             id="editForm"
             method="post"
-            action="{% url 'edit_job' entity.id %}"
+            action="{% url 'edit_fiber' entity.id %}"
             enctype="multipart/form-data"
             data-redirecturl="{% url 'fiber_detail' entity.id %}"
           >
@@ -201,14 +201,30 @@
                   {% endfor %}
                 </div>
               </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.lampiran.label_tag }} {{ form.lampiran }} 
+                  {% for error in form.lampiran.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.lampiran_og.label_tag }} {{ form.lampiran_og }} 
+                  {% for error in form.lampiran_og.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
             </div>
             <button type="submit" class="btn btn-primary">Update</button>
           </form>
           <form
             id="deleteForm"
             method="post"
-            action="{% url 'delete_report' entity.id %}"
-            onclick="return confirmDelete('/api/display_report');"
+            action="{% url 'delete_fiber' entity.id %}"
+            onclick="return confirmDelete('/fiber/display_fiber');"
             class="mt-2"
           >
             {% csrf_token %}
