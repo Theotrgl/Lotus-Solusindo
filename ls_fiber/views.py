@@ -443,22 +443,25 @@ def add_fiber(request, initial=None):
     entity_form_instance = JobForm(request.POST or None, request.FILES or None)
     if request.method == 'POST':
         form = JobForm(request.POST, request.FILES)
+        print(request.POST)  # Print POST data for debugging
+        print(request.FILES)  # Print FILES data for debugging
         if form.is_valid():
-            report = form.save(commit=False)
-            foto = request.FILES.get('lampiran')
-            og_foto = request.FILES.get('lampiran_og')
+            job = form.save(commit=False)
+            lampiran = request.FILES.get('lampiran')
+            lampiran_og = request.FILES.get('lampiran_og')
 
-            if foto:
-                resized_foto_path = process_image(foto, False)
-                form.instance.foto = resized_foto_path
-                report.save()
-            if og_foto:
-                resized_og_foto_path = process_image(og_foto, True)
-                form.instance.og_foto = resized_og_foto_path
-                report.save()
+            if lampiran:
+                resized_lampiran_path = process_image(lampiran, False)
+                job.lampiran = resized_lampiran_path
 
-            report.save()
+            if lampiran_og:
+                resized_lampiran_og_path = process_image(lampiran_og, True)
+                job.lampiran_og = resized_lampiran_og_path
+
+            job.save()
             return redirect('display_fiber')
+        else:
+            print(form.errors)  # Print form errors for debugging
     else:
         print(initial)
         if (initial):

@@ -26,10 +26,10 @@ class JobForm(forms.ModelForm):
             'freq' : forms.TextInput(attrs={'class':'form-control'}),
             'perangkatInstall' : forms.TextInput(attrs={'class':'form-control'}),
             'perangkatDismantle' : forms.TextInput(attrs={'class':'form-control'}),
-            'pelaksanaPekerjaan' : forms.Textarea(attrs={'class':'form-control'}),
+            'pelaksanaPekerjaan' : forms.SelectMultiple(attrs={'class': 'form-control', 'multiple': 'true'}),
             'jamMulai' : forms.TimeInput(attrs={'type': 'time', 'class':'form-control'}),
             'jamSelesai' : forms.TimeInput(attrs={'type': 'time', 'class':'form-control'}),
-            'tanggal': forms.DateInput(attrs={'class': 'form-control'}),
+            'tanggal': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
         }
         labels = {
             'tanggal' : 'Tanggal Pelaksanaan',
