@@ -63,8 +63,8 @@ class ClientPICForm(forms.ModelForm):
     class Meta:
         model = ClientPIC
         fields = '__all__'
+        exclude = ['client_id']
         widget = {
-            'client' : Select2Widget(attrs={'class' : 'form-control'}),
             'nama' : forms.TextInput(attrs={'class':'form-control'}),
             'telp' : RegionalPhoneNumberWidget(attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
             'email' : forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'username@lotuslestari.co.id'})
