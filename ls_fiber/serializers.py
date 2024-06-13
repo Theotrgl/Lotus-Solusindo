@@ -42,10 +42,7 @@ class WorkerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class JobDetailSerializer(serializers.ModelSerializer):
-    pelaksanaPekerjaan = serializers.ListField(
-        child=serializers.CharField(max_length=1000),
-        allow_empty= False
-    )
+    pelaksanaPekerjaan = serializers.PrimaryKeyRelatedField(queryset=Worker.objects.all(), many=True)
     lampiran = serializers.ImageField()
     class Meta:
         model = JobDetail
