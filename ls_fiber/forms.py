@@ -54,7 +54,7 @@ class ClientForm(forms.ModelForm):
     class Meta:
         model = Client
         fields = '__all__'
-        widget={
+        widgets = {
             'namaPelanggan' : forms.TextInput(attrs={'class' : 'form-control'}),
             'nomorTelponPelanggan' : forms.TextInput(attrs={'class':'form-control'})
         }
@@ -64,7 +64,8 @@ class ClientPICForm(forms.ModelForm):
         model = ClientPIC
         fields = '__all__'
         exclude = ['client_id']
-        widget = {
+        widgets = {
+            'client' : Select2Widget(attrs={'class' : 'form-control'}),
             'nama' : forms.TextInput(attrs={'class':'form-control'}),
             'telp' : RegionalPhoneNumberWidget(attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
             'email' : forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'username@lotuslestari.co.id'})
@@ -74,7 +75,7 @@ class ClientAlamatForm(forms.ModelForm):
     class Meta:
         model = ClientAlamat
         fields = '__all__'
-        widget = {
+        widgets = {
             'client' : Select2Widget(attrs={'class' : 'form-control'}),
             'provinsi': Select2Widget(attrs={'class': 'form-control'}),
             'kota': Select2Widget(attrs={'class': 'form-control'}),
@@ -90,4 +91,21 @@ class ClientAlamatForm(forms.ModelForm):
             'kelurahan': 'Kelurahan',
             'kode_pos': 'Kode Pos',
             'detail': 'Alamat Detail',
+        }
+
+class WorkerForm(forms.ModelForm):
+    class Meta:
+        model = Worker
+        fields = '__all__'
+        widgets = {
+            'nama' : forms.TextInput(attrs={'class': 'form-control'}),
+            'ktp' : forms.NumberInput(attrs={'class': 'form-control'}),
+            'telponWorker' : RegionalPhoneNumberWidget(attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
+            'rekening' : forms.NumberInput(attrs={'class': 'form-control'}),
+        }
+        labels = {
+            'nama': 'Nama Worker',
+            'ktp': 'No KTP',
+            'telponWorker': 'No Telpon',
+            'rekening': 'No Rekening',
         }

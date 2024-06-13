@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    {% block title %}Add Worker Fiber Optic{% endblock %}
+  </head>
+
+  <body>
+    {% block content %}
+    <h2>Add Worker</h2>
+    <div class="form-group w-50">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %} {{entity_form.as_p}}
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    {% endblock %}
+  </body>
+</html>
