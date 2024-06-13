@@ -2,231 +2,216 @@
 
 <!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     {% block title %}Add Fiber Optic Data{% endblock %}
-</head>
+  </head>
 
-<body>
-  {% block content %}
-  <h2>Add Fiber Optic Data</h2>
-  <div class="form-group w-50">
-    <form method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <div class="row">
+  <body>
+    {% block content %}
+    <h2>Add Fiber Optic Data</h2>
+    <div class="form-group w-50">
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
           <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.timestamp.label_tag }}
-                {{ entity_form.timestamp }}
-                {% for error in entity_form.timestamp.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-            </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.sender.label_tag }}
-                {{ entity_form.sender }}
-                {% for error in entity_form.sender.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-            </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.client.label_tag }}
-                {{ entity_form.client }}
-                {% for error in entity_form.client.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-            </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.jenisPekerjaan.label_tag }}
-                {{ entity_form.jenisPekerjaan }}
-                {% for error in entity_form.jenisPekerjaan.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.kategoriPekerjaan.label_tag }}
-                {{ entity_form.kategoriPekerjaan }}
-                {% for error in entity_form.kategoriPekerjaan.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-      </div>
-
-      <div class="row">
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.jenisLayanan.label_tag }}
-                {{ entity_form.jenisLayanan }}
-                {% for error in entity_form.jenisLayanan.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.action.label_tag }}
-                {{ entity_form.action }}
-                {% for error in entity_form.action.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
-          <div class="form-group">
-            {{ entity_form.keterangan.label_tag }}
-            {{ entity_form.keterangan }}
-            {% for error in entity_form.keterangan.errors %}
-            <span class="text-danger">{{ error }}</span>
-            {% endfor %}
-          </div>
-        </div>
-        <div class="col-md-6">
             <div class="form-group">
-              {{ entity_form.status.label_tag }}
-              {{ entity_form.status }}
-              {% for error in entity_form.status.errors %}
+              {{ entity_form.timestamp.label_tag }} {{ entity_form.timestamp }}
+              {% for error in entity_form.timestamp.errors %}
               <span class="text-danger">{{ error }}</span>
               {% endfor %}
             </div>
-        </div>
-      </div>
-
-      <div class="row">
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.gps.label_tag }}
-                {{ entity_form.gps }}
-                {% for error in entity_form.gps.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
           </div>
           <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.ssid.label_tag }}
-                {{ entity_form.ssid }}
-                {% for error in entity_form.ssid.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-      </div>
-
-      
-      <div class="form-group">
-        {{ entity_form.signal.label_tag }}
-        {{ entity_form.signal }}
-        {% for error in entity_form.signal.errors %}
-        <span class="text-danger">{{ error }}</span>
-        {% endfor %}
-      </div>
-
-      <div class="row">
-        <div class="col-md-6">
             <div class="form-group">
-              {{ entity_form.freq.label_tag }}
-              {{ entity_form.freq }}
+              {{ entity_form.sender.label_tag }} {{ entity_form.sender }} 
+              {% for error in entity_form.sender.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.tanggal.label_tag }} {{ entity_form.tanggal }} 
+              {% for error in entity_form.tanggal.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.client.label_tag }} {{ entity_form.client }} 
+              {% for error in entity_form.client.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        
+        <hr/>
+
+        <div class="form-group">
+          {{ entity_form.jenisPekerjaan.label_tag }} {{ entity_form.jenisPekerjaan }} 
+          {% for error in entity_form.jenisPekerjaan.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.kategoriPekerjaan.label_tag }} {{ entity_form.kategoriPekerjaan }} 
+              {% for error in entity_form.kategoriPekerjaan.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.jenisLayanan.label_tag }} {{ entity_form.jenisLayanan }} 
+              {% for error in entity_form.jenisLayanan.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <hr/>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.action.label_tag }} {{ entity_form.action }} 
+              {% for error in entity_form.action.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.keterangan.label_tag }} {{ entity_form.keterangan }} 
+              {% for error in entity_form.keterangan.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          {{ entity_form.status.label_tag }} {{ entity_form.status }} 
+          {% for error in entity_form.status.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.gps.label_tag }} {{ entity_form.gps }} 
+              {% for error in entity_form.gps.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.ssid.label_tag }} {{ entity_form.ssid }} 
+              {% for error in entity_form.ssid.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.signal.label_tag }} {{ entity_form.signal }} 
+              {% for error in entity_form.signal.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.freq.label_tag }} {{ entity_form.freq }} 
               {% for error in entity_form.freq.errors %}
               <span class="text-danger">{{ error }}</span>
               {% endfor %}
             </div>
-        </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.perangkatInstall.label_tag }}
-                {{ entity_form.perangkatInstall }}
-                {% for error in entity_form.perangkatInstall.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
           </div>
-      </div>
+        </div>
 
-      <div class="row">
-        <div class="col-md-6">
+        <hr/>
+
+        <div class="row">
+          <div class="col-md-6">
             <div class="form-group">
-              {{ entity_form.perangkatDismantle.label_tag }}
-              {{ entity_form.perangkatDismantle }}
+              {{ entity_form.perangkatInstall.label_tag }} {{ entity_form.perangkatInstall }} 
+              {% for error in entity_form.perangkatInstall.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.perangkatDismantle.label_tag }} {{ entity_form.perangkatDismantle }} 
               {% for error in entity_form.perangkatDismantle.errors %}
               <span class="text-danger">{{ error }}</span>
               {% endfor %}
             </div>
+          </div>
         </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.pelaksanaPekerjaan.label_tag }}
-                {{ entity_form.pelaksanaPekerjaan }}
-                {% for error in entity_form.pelaksanaPekerjaan.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-      </div>
 
-      <div class="row">
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.jamMulai.label_tag }}
-                {{ entity_form.jamMulai }}
-                {% for error in entity_form.jamMulai.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.jamSelesai.label_tag }}
-                {{ entity_form.jamSelesai }}
-                {% for error in entity_form.jamSelesai.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.tanggal.label_tag }}
-                {{ entity_form.tanggal }}
-                {% for error in entity_form.tanggal.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.lampiran.label_tag }}
-                {{ entity_form.lampiran }}
-                {% for error in entity_form.lampiran.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-          <div class="col-md-6">
-              <div class="form-group">
-                {{ entity_form.lampiran_og.label_tag }}
-                {{ entity_form.lampiran_og }}
-                {% for error in entity_form.lampiran_og.errors %}
-                <span class="text-danger">{{ error }}</span>
-                {% endfor %}
-              </div>
-          </div>
-      </div>
+        <div class="form-group">
+          {{ entity_form.pelaksanaPekerjaan.label_tag }} {{ entity_form.pelaksanaPekerjaan }} 
+          {% for error in entity_form.pelaksanaPekerjaan.errors %}
+          <span class="text-danger">{{ error }}</span>
+          {% endfor %}
+        </div>
 
-      <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-  </div>
-  {% endblock %}
-</body>
+        <hr class="mt-5"/>
 
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.jamMulai.label_tag }} {{ entity_form.jamMulai }} 
+              {% for error in entity_form.jamMulai.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.jamSelesai.label_tag }} {{ entity_form.jamSelesai }} 
+              {% for error in entity_form.jamSelesai.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.lampiran.label_tag }} {{ entity_form.lampiran }} 
+              {% for error in entity_form.lampiran.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              {{ entity_form.lampiran_og.label_tag }} {{ entity_form.lampiran_og }} 
+              {% for error in entity_form.lampiran_og.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+    </div>
+    {% endblock %}
+  </body>
 </html>
