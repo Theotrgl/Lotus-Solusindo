@@ -15,19 +15,10 @@
         <div class="row">
             <!-- Left column for the form -->
             <div class="col-md-6">
-                <form id="editForm" method="post" action="{% url 'edit_report' entity.id %}" enctype="multipart/form-data"
+                <form id="editForm" method="post" action="{% url 'edit_fiber' entity.id %}" enctype="multipart/form-data"
                     data-redirectUrl="{% url 'fiber_detail' entity.id %}">
                     {% csrf_token %}
                     <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.timestamp.label_tag }}
-                              {{ form.timestamp }}
-                              {% for error in form.timestamp.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                          </div>
                           <div class="col-md-6">
                               <div class="form-group">
                                 {{ form.sender.label_tag }}
@@ -48,27 +39,27 @@
                         </div>
                       </div>
                       <div class="form-group">
-                        {{ form.tiketId.label_tag }}
-                        {{ form.tiketId }}
-                        {% for error in form.tiketId.errors %}
+                        {{ form.jenisPekerjaan.label_tag }}
+                        {{ form.jenisPekerjaan }}
+                        {% for error in form.jenisPekerjaan.errors %}
                         <span class="text-danger">{{ error }}</span>
                         {% endfor %}
                       </div>
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                              {{ form.driver.label_tag }}
-                              {{ form.driver }}
-                              {% for error in form.driver.errors %}
+                              {{ form.kategoriPekerjaan.label_tag }}
+                              {{ form.kategoriPekerjaan }}
+                              {% for error in form.kategoriPekerjaan.errors %}
                               <span class="text-danger">{{ error }}</span>
                               {% endfor %}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                              {{ form.plat.label_tag }}
-                              {{ form.plat }}
-                              {% for error in form.plat.errors %}
+                              {{ form.jenisLayanan.label_tag }}
+                              {{ form.jenisLayanan }}
+                              {% for error in form.jenisLayanan.errors %}
                               <span class="text-danger">{{ error }}</span>
                               {% endfor %}
                             </div>
@@ -78,18 +69,18 @@
                     <div class="row">
                       <div class="col-md-6">
                         <div class="form-group">
-                          {{ form.PO.label_tag }}
-                          {{ form.PO }}
-                          {% for error in form.PO.errors %}
+                          {{ form.action.label_tag }}
+                          {{ form.action }}
+                          {% for error in form.action.errors %}
                           <span class="text-danger">{{ error }}</span>
                           {% endfor %}
                         </div>
                       </div>
                       <div class="col-md-6">
                           <div class="form-group">
-                            {{ form.DO.label_tag }}
-                            {{ form.DO }}
-                            {% for error in form.DO.errors %}
+                            {{ form.keterangan.label_tag }}
+                            {{ form.keterangan }}
+                            {% for error in form.keterangan.errors %}
                             <span class="text-danger">{{ error }}</span>
                             {% endfor %}
                           </div>
@@ -99,13 +90,98 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                              {{ form.no_tiket.label_tag }}
-                              {{ form.no_tiket }}
-                              {% for error in form.no_tiket.errors %}
+                              {{ form.gps.label_tag }}
+                              {{ form.gps }}
+                              {% for error in form.gps.errors %}
                               <span class="text-danger">{{ error }}</span>
                               {% endfor %}
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              {{ form.ssid.label_tag }}
+                              {{ form.ssid }}
+                              {% for error in form.ssid.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              {{ form.signal.label_tag }}
+                              {{ form.signal }}
+                              {% for error in form.signal.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              {{ form.freq.label_tag }}
+                              {{ form.freq }}
+                              {% for error in form.freq.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              {{ form.status.label_tag }}
+                              {{ form.status }}
+                              {% for error in form.status.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+              
+                    <div class="form-group">
+                      {{ form.perangkatInstall.label_tag }}
+                      {{ form.perangkatInstall }}
+                      {% for error in form.perangkatInstall.errors %}
+                      <span class="text-danger">{{ error }}</span>
+                      {% endfor %}
+                    </div>
+              
+                    <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                            {{ form.perangkatDismantle.label_tag }}
+                            {{ form.perangkatDismantle }}
+                            {% for error in form.perangkatDismantle.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                      </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              {{ form.jamMulai.label_tag }}
+                              {{ form.jamMulai }}
+                              {% for error in form.jamMulai.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                              {{ form.jamSelesai.label_tag }}
+                              {{ form.jamSelesai }}
+                              {% for error in form.jamSelesai.errors %}
+                              <span class="text-danger">{{ error }}</span>
+                              {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6">
+                          <div class="form-group">
+                            {{ form.pelaksanaPekerjaan.label_tag }}
+                            {{ form.pelaksanaPekerjaan }}
+                            {% for error in form.pelaksanaPekerjaan.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                            {% endfor %}
+                          </div>
+                      </div>
                         <div class="col-md-6">
                             <div class="form-group">
                               {{ form.tanggal.label_tag }}
@@ -117,62 +193,12 @@
                         </div>
                     </div>
               
-                    <div class="form-group">
-                      {{ form.kayu.label_tag }}
-                      {{ form.kayu }}
-                      {% for error in form.kayu.errors %}
-                      <span class="text-danger">{{ error }}</span>
-                      {% endfor %}
-                    </div>
-              
-                    <div class="row">
-                      <div class="col-md-6">
-                          <div class="form-group">
-                            {{ form.berat.label_tag }}
-                            {{ form.berat }}
-                            {% for error in form.berat.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                          </div>
-                      </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.reject.label_tag }}
-                              {{ form.reject }}
-                              {% for error in form.reject.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-              
-                    <div class="row">
-                      <div class="col-md-6">
-                          <div class="form-group">
-                            {{ form.lokasi.label_tag }}
-                            {{ form.lokasi }}
-                            {% for error in form.lokasi.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                          </div>
-                      </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.tujuan.label_tag }}
-                              {{ form.tujuan }}
-                              {% for error in form.tujuan.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-              
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                              {{ form.foto.label_tag }}
-                              {{ form.foto }}
-                              {% for error in form.foto.errors %}
+                              {{ form.lampiran.label_tag }}
+                              {{ form.lampiran }}
+                              {% for error in form.lampiran.errors %}
                               <span class="text-danger">{{ error }}</span>
                               {% endfor %}
                             </div>
@@ -180,31 +206,31 @@
 
                         <div class="col-md-6">
                             <div class="form-group">
-                              {{ form.og_foto.label_tag }}
-                              {{ form.og_foto }}
-                              {% for error in form.og_foto.errors %}
+                              {{ form.lampiran_og.label_tag }}
+                              {{ form.lampiran_og }}
+                              {% for error in form.lampiran_og.errors %}
                               <span class="text-danger">{{ error }}</span>
                               {% endfor %}
                             </div>
                         </div>
                     </div> 
-                    {% if request.user|has_group:'GA' or request.user|has_group:'Admin' %}
+                    <!-- {% if request.user|has_group:'GA' or request.user|has_group:'Admin' %}
                     <div class="form-group">
                         <label for="{{ form.completed.id_for_label }}">Completed</label>
                         {{ form.completed }}
                     </div>
-                    {% endif %}
+                    {% endif %} -->
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
-                <form id="deleteForm" method="post" action="{% url 'delete_report' entity.id %}"
-                    onclick="return confirmDelete('/api/display_report');" class="mt-2">
+                <form id="deleteForm" method="post" action="{% url 'delete_fiber' entity.id %}"
+                    onclick="return confirmDelete('/fiber/display_fiber');" class="mt-2">
                     {% csrf_token %}
                     <button type="button" class="btn btn-danger">Delete</button>
                 </form>
             </div>
             <div class="col-md-6">
-              {% if form.instance.og_foto %}
-              <img src="{{ form.instance.og_foto.url }}" alt="Foto" class="img-fluid" style="max-width: 600px; max-height: 600px;">
+              {% if form.instance.lampiran_og %}
+              <img src="{{ form.instance.lampiran_og.url }}" alt="Foto" class="img-fluid" style="max-width: 600px; max-height: 600px;">
               {% endif %}
             </div>
         </div>

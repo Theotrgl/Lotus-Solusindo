@@ -13,9 +13,9 @@ class JobForm(forms.ModelForm):
             'sender' : Select2Widget(attrs={'class': 'form-control'}),
             'client' : Select2Widget(attrs={'class': 'form-control'}),
             'tanggal': forms.DateInput(attrs={'class': 'form-control'}),
-            'jenisPekerjaan' : Select2Widget(attrs={'class': 'form-control'}),
-            'kategoriPelayanan' : Select2Widget(attrs={'class': 'form-control'}),
-            'jenisLayanan' : Select2Widget(attrs={'class': 'form-control'}),
+            'jenisPekerjaan' : forms.TextInput(attrs={'class': 'form-control'}),
+            'kategoriPekerjaan' : forms.TextInput(attrs={'class': 'form-control'}),
+            'jenisLayanan' : forms.TextInput(attrs={'class': 'form-control'}),
             'action' : forms.TextInput(attrs={'class':'form-control'}),
             'keterangan' : forms.TextInput(attrs={'class':'form-control'}),
             'gps' : forms.TextInput(attrs={'class':'form-control'}),
@@ -36,8 +36,8 @@ class ClientForm(forms.ModelForm):
         model = Client
         fields = '__all__'
         widget={
-            'user' : Select2Widget(attrs={'class' : 'form-control'}),
-            'username' : forms.TextInput(attrs={'class':'form-control'})
+            'namaPelanggan' : forms.TextInput(attrs={'class' : 'form-control'}),
+            'nomorTelponPelanggan' : forms.TextInput(attrs={'class':'form-control'})
         }
     
 class ClientPICForm(forms.ModelForm):

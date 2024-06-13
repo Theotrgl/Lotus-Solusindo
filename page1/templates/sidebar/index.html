@@ -104,6 +104,25 @@
           </ul>
         </li>
         {% endif %}
+        {% if request.user|has_group:'FO' or request.user|has_group:'Messenger' or request.user|has_group:'Admin' %}
+        <li class="active">
+          <a
+            href="#lsFiberSubmenu"
+            data-toggle="collapse"
+            aria-expanded="true"
+            class="dropdown-toggle sidebar-a"
+            >LS Fiber</a
+          >
+          <ul class="collapse list-unstyled show" id="lsFiberSubmenu">
+              {% if request.user|has_group:'Admin' %}
+              <li><a class="sidebar-a" href="/fiber/display_fiber">Fiber Optic Data Table</a></li>
+              {% endif %}
+              {% if request.user|has_group:'Admin' %}
+              <li><a class="sidebar-a" href="/fiber/display_fiber_client">Client</a></li>
+              {% endif %}
+          </ul>
+        </li>
+        {% endif %}
 
       </ul>
 
