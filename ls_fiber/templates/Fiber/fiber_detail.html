@@ -1,243 +1,232 @@
 {% extends 'base.html' %} {% load auth_extras %}
 
-<html>
-
-<head>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
     {% block title %}Fiber Optic Data Detail{% endblock %}
-</head>
-
-<body>
+  </head>
+  <body>
     {% block content %}
     <div class="container mt-4 custom-container">
-        <h1>Fiber Optic Data Detail</h1>
-        <a href="/fiber/display_fiber">Back</a>
+      <h1>Fiber Optic Data Detail</h1>
+      <a href="/fiber/display_fiber">Back</a>
 
-        <div class="row">
-            <!-- Left column for the form -->
-            <div class="col-md-6">
-                <form id="editForm" method="post" action="{% url 'edit_fiber' entity.id %}" enctype="multipart/form-data"
-                    data-redirectUrl="{% url 'fiber_detail' entity.id %}">
-                    {% csrf_token %}
-                    <div class="row">
-                          <div class="col-md-6">
-                              <div class="form-group">
-                                {{ form.sender.label_tag }}
-                                {{ form.sender }}
-                                {% for error in form.sender.errors %}
-                                <span class="text-danger">{{ error }}</span>
-                                {% endfor %}
-                              </div>
-                          </div>
-                          <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.client.label_tag }}
-                              {{ form.client }}
-                              {% for error in form.client.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        {{ form.jenisPekerjaan.label_tag }}
-                        {{ form.jenisPekerjaan }}
-                        {% for error in form.jenisPekerjaan.errors %}
-                        <span class="text-danger">{{ error }}</span>
-                        {% endfor %}
-                      </div>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.kategoriPekerjaan.label_tag }}
-                              {{ form.kategoriPekerjaan }}
-                              {% for error in form.kategoriPekerjaan.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.jenisLayanan.label_tag }}
-                              {{ form.jenisLayanan }}
-                              {% for error in form.jenisLayanan.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-              
-                    <div class="row">
-                      <div class="col-md-6">
-                        <div class="form-group">
-                          {{ form.action.label_tag }}
-                          {{ form.action }}
-                          {% for error in form.action.errors %}
-                          <span class="text-danger">{{ error }}</span>
-                          {% endfor %}
-                        </div>
-                      </div>
-                      <div class="col-md-6">
-                          <div class="form-group">
-                            {{ form.keterangan.label_tag }}
-                            {{ form.keterangan }}
-                            {% for error in form.keterangan.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                          </div>
-                      </div>
-                    </div>
-              
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.gps.label_tag }}
-                              {{ form.gps }}
-                              {% for error in form.gps.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.ssid.label_tag }}
-                              {{ form.ssid }}
-                              {% for error in form.ssid.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.signal.label_tag }}
-                              {{ form.signal }}
-                              {% for error in form.signal.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.freq.label_tag }}
-                              {{ form.freq }}
-                              {% for error in form.freq.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.status.label_tag }}
-                              {{ form.status }}
-                              {% for error in form.status.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-              
-                    <div class="form-group">
-                      {{ form.perangkatInstall.label_tag }}
-                      {{ form.perangkatInstall }}
-                      {% for error in form.perangkatInstall.errors %}
-                      <span class="text-danger">{{ error }}</span>
-                      {% endfor %}
-                    </div>
-              
-                    <div class="row">
-                      <div class="col-md-6">
-                          <div class="form-group">
-                            {{ form.perangkatDismantle.label_tag }}
-                            {{ form.perangkatDismantle }}
-                            {% for error in form.perangkatDismantle.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                          </div>
-                      </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.jamMulai.label_tag }}
-                              {{ form.jamMulai }}
-                              {% for error in form.jamMulai.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.jamSelesai.label_tag }}
-                              {{ form.jamSelesai }}
-                              {% for error in form.jamSelesai.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-6">
-                          <div class="form-group">
-                            {{ form.pelaksanaPekerjaan.label_tag }}
-                            {{ form.pelaksanaPekerjaan }}
-                            {% for error in form.pelaksanaPekerjaan.errors %}
-                            <span class="text-danger">{{ error }}</span>
-                            {% endfor %}
-                          </div>
-                      </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.tanggal.label_tag }}
-                              {{ form.tanggal }}
-                              {% for error in form.tanggal.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                    </div>
-              
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.lampiran.label_tag }}
-                              {{ form.lampiran }}
-                              {% for error in form.lampiran.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
+      <div class="row">
+        <!-- Left column for the form -->
+        <div class="col-md-6">
+          <form
+            id="editForm"
+            method="post"
+            action="{% url 'edit_job' entity.id %}"
+            enctype="multipart/form-data"
+            data-redirecturl="{% url 'fiber_detail' entity.id %}"
+          >
+            {% csrf_token %}
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.timestamp.label_tag }} {{ form.timestamp }} 
+                  {% for error in form.timestamp.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.sender.label_tag }} {{ form.sender }} 
+                  {% for error in form.sender.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
 
-                        <div class="col-md-6">
-                            <div class="form-group">
-                              {{ form.lampiran_og.label_tag }}
-                              {{ form.lampiran_og }}
-                              {% for error in form.lampiran_og.errors %}
-                              <span class="text-danger">{{ error }}</span>
-                              {% endfor %}
-                            </div>
-                        </div>
-                    </div> 
-                    <!-- {% if request.user|has_group:'GA' or request.user|has_group:'Admin' %}
-                    <div class="form-group">
-                        <label for="{{ form.completed.id_for_label }}">Completed</label>
-                        {{ form.completed }}
-                    </div>
-                    {% endif %} -->
-                    <button type="submit" class="btn btn-primary">Update</button>
-                </form>
-                <form id="deleteForm" method="post" action="{% url 'delete_fiber' entity.id %}"
-                    onclick="return confirmDelete('/fiber/display_fiber');" class="mt-2">
-                    {% csrf_token %}
-                    <button type="button" class="btn btn-danger">Delete</button>
-                </form>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.tanggal.label_tag }} {{ form.tanggal }} 
+                  {% for error in form.tanggal.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.client.label_tag }} {{ form.client }} 
+                  {% for error in form.client.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
             </div>
-            <div class="col-md-6">
-              {% if form.instance.lampiran_og %}
-              <img src="{{ form.instance.lampiran_og.url }}" alt="Foto" class="img-fluid" style="max-width: 600px; max-height: 600px;">
-              {% endif %}
+
+            <hr />
+
+            <div class="form-group">
+              {{ form.jenisPekerjaan.label_tag }} {{ form.jenisPekerjaan }} 
+              {% for error in form.jenisPekerjaan.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
             </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.kategoriPekerjaan.label_tag }} {{ form.kategoriPekerjaan }} 
+                  {% for error in form.kategoriPekerjaan.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.jenisLayanan.label_tag }} {{ form.jenisLayanan }} 
+                  {% for error in form.jenisLayanan.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.action.label_tag }} {{ form.action }} 
+                  {% for error in form.action.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.keterangan.label_tag }} {{ form.keterangan }} 
+                  {% for error in form.keterangan.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              {{ form.status.label_tag }} {{ form.status }} 
+              {% for error in form.status.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.gps.label_tag }} {{ form.gps }} 
+                  {% for error in form.gps.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.ssid.label_tag }} {{ form.ssid }} 
+                  {% for error in form.ssid.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.signal.label_tag }} {{ form.signal }} 
+                  {% for error in form.signal.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.freq.label_tag }} {{ form.freq }} 
+                  {% for error in form.freq.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <hr />
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.perangkatInstall.label_tag }} {{ form.perangkatInstall }} 
+                  {% for error in form.perangkatInstall.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.perangkatDismantle.label_tag }} {{ form.perangkatDismantle }} 
+                  {% for error in form.perangkatDismantle.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              {{ form.pelaksanaPekerjaan.label_tag }} {{ form.pelaksanaPekerjaan }} 
+              {% for error in form.pelaksanaPekerjaan.errors %}
+              <span class="text-danger">{{ error }}</span>
+              {% endfor %}
+            </div>
+
+            <hr class="mt-4" />
+
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.jamMulai.label_tag }} {{ form.jamMulai }} 
+                  {% for error in form.jamMulai.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group">
+                  {{ form.jamSelesai.label_tag }} {{ form.jamSelesai }} 
+                  {% for error in form.jamSelesai.errors %}
+                  <span class="text-danger">{{ error }}</span>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+          <form
+            id="deleteForm"
+            method="post"
+            action="{% url 'delete_report' entity.id %}"
+            onclick="return confirmDelete('/api/display_report');"
+            class="mt-2"
+          >
+            {% csrf_token %}
+            <button type="button" class="btn btn-danger">Delete</button>
+          </form>
         </div>
-        <script>
-        
-        </script>
-        {% endblock %}
-</body>
-
+        <div class="col-md-6">
+          {% if form.instance.lampiran_og %}
+          <img
+            src="{{ form.instance.lampiran_og.url }}"
+            alt="Foto"
+            class="img-fluid"
+            style="max-width: 600px; max-height: 600px"
+          />
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    {% endblock %}
+  </body>
 </html>

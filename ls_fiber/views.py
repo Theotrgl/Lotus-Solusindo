@@ -356,14 +356,69 @@ def display_fiber(request):
 
 @login_required
 def display_lampiran(request, url):
-    # Get the URL parameter 'url' from the request
-
-    # Render the display_image.html template with the image_url context variable
     return render(request, 'Fiber/display_lampiran.html', {'url': url})
 
 @login_required
 def fiber_detail(request, id):
     return entity_detail(request, JobDetail, JobForm, 'id', id, 'Fiber/fiber_detail.html')
+
+@login_required
+def edit_job(request, id):
+    entity = get_object_or_404(JobDetail,id = id)
+    
+    if request.method == 'POST':
+        form = JobForm(request.POST, request.FILES, instance=entity)
+        
+        if form.is_valid():
+            foto = request.FILES.get('lampiran')
+            og_foto = request.FILES.get('lampiran_og')
+
+            if foto:
+                resized_foto_path = process_image(foto, False)
+                form.instance.lampiran = resized_foto_path
+            if og_foto:
+                resized_og_foto_path = process_image(og_foto, True)
+                form.instance.lampiran_og = resized_og_foto_path
+
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        form = JobDetail(instance=entity)
+    
+    return render(request, "/Fiber/edit_job.html", {'form': form})
+
+def process_image(image, is_original):
+    upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    img = Image.open(image)
+
+    # Generate a unique identifier
+    unique_id = str(uuid.uuid4())[:8]  # Use the first 8 characters of a UUID
+    
+    # Strip file extension from the image filename
+    image_name_without_extension, extension = os.path.splitext(image.name)
+    
+    # Resize the image
+    if is_original:
+        resized_img = img.resize((500, 500))
+    else:
+        resized_img = img.resize((100, 100))
+    
+    # Construct the resized image name
+    if is_original:
+        resized_image_name = f"original-{upload_date}-{unique_id}-{extension}"
+    else:
+        resized_image_name = f"resized-{upload_date}-{unique_id}-{extension}"
+    
+    # Save the resized image
+    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'report_photos', resized_image_name)
+    resized_img.save(resized_image_path)
+
+    relative_path = os.path.relpath(resized_image_path, settings.MEDIA_ROOT )
+    
+    return relative_path
+
 
 @login_required
 def delete_selected_rows_fiber(request):

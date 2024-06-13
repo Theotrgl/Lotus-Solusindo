@@ -25,16 +25,12 @@
             <option value="8">Jenis Layanan</option>
             <option value="9">Action</option>
             <option value="10">Keterangan</option>
-            <option value="11">GPS</option>
-            <option value="12">SSID</option>
-            <option value="13">Signal</option>
-            <option value="14">Frekuensi</option>
-            <option value="15">Status</option>
-            <option value="16">Perangkat Install</option>
-            <option value="17">Perangkat Dismantle</option>
-            <option value="18">Jam Mulai</option>
-            <option value="19">Jam Selesai</option>
-            <option value="20">Worker</option>
+            <option value="11">Hasil</option>
+            <option value="12">Perangkat Install</option>
+            <option value="13">Perangkat Dismantle</option>
+            <option value="14">Jam Mulai</option>
+            <option value="15">Jam Selesai</option>
+            <option value="16">Worker</option>
             <!-- Add more options for additional columns -->
           </select>
           <input
@@ -135,11 +131,7 @@
             <th>Jenis Layanan</th>
             <th>Action</th>
             <th>Keterangan</th>
-            <th>GPS</th>
-            <th>SSID</th>
-            <th>Signal</th>
-            <th>Frekuensi</th>
-            <th>Status</th>
+            <th>Hasil</th>
             <th>Perangkat Install</th>
             <th>Perangkat Dismantle</th>
             <th>Jam Mulai</th>
@@ -172,15 +164,17 @@
             <td>{{ fiber.jenisLayanan }}</td>
             <td>{{ fiber.action }}</td>
             <td>{{ fiber.keterangan }}</td>
-            <td>{{ fiber.gps }}</td>
-            <td>{{ fiber.ssid }}</td>
-            <td>{{ fiber.signal }}</td>
-            <td>{{ fiber.freq }}</td>
-            <td>{{ fiber.status }}</td>
+            <td>
+              Status: {{ fiber.status|linebreaksbr }}
+              GPS: {{ fiber.gps|linebreaksbr }}
+              SSID: {{ fiber.ssid|linebreaksbr }}
+              Signal: {{ fiber.signal|linebreaksbr }}
+              Freq: {{ fiber.freq|linebreaksbr }}
+            </td>
             <td>{{ fiber.perangkatInstall }}</td>
             <td>{{ fiber.perangkatDismantle }}</td>
-            <td>{{ fiber.jamMulai }}</td>
-            <td>{{ fiber.jamSelesai }}</td>
+            <td>{{ fiber.jamMulai|date:"H:i:s" }}</td>
+            <td>{{ fiber.jamSelesai|date:"H:i:s" }}</td>
             <td>{{ fiber.pelaksanaPekerjaan }}</td>
             <td>
               {% if fiber.lampiran_og and fiber.lampiran %}
@@ -210,7 +204,6 @@
           select: {
             style: "multi",
           },
-
           columns: [
             null,
             { visible: false },
@@ -223,11 +216,7 @@
             null,
             null,
             null,
-            null,
-            null,
-            null,
-            null,
-            null,
+            { visible: true, width: "30%"},
             null,
             null,
             null,

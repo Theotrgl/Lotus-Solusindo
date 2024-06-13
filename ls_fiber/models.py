@@ -42,11 +42,18 @@ class Worker(models.Model):
     
     def __str__(self):
         return self.nama
+    
 class JobDetail(models.Model):
+    JENIS_PEKERJAAN_CHOICES = [
+        ('Installation', 'Installation'),
+        ('Dismantle', 'Dismantle'),
+        ('Troubleshooting', 'Troubleshooting'),
+        ('Others', 'Others'),
+    ]
     sender = models.ForeignKey(User, on_delete=models.SET_NULL, null = True)
     client = models.ForeignKey(Client, on_delete=models.SET_NULL, null=True)
     tanggal = models.DateField(null=True)
-    jenisPekerjaan = models.CharField(max_length=100)
+    jenisPekerjaan = models.CharField(max_length=100, choices=JENIS_PEKERJAAN_CHOICES)
     kategoriPekerjaan = models.CharField(max_length=100)
     jenisLayanan = models.CharField(max_length=100)
     action = models.CharField(max_length=255)
@@ -63,6 +70,7 @@ class JobDetail(models.Model):
     lampiran = models.ImageField(upload_to='fiber_photos/', null=True)
     lampiran_og = models.ImageField(upload_to = 'fiber_photos/', null=True)
     pelaksanaPekerjaan = models.TextField(max_length = 1000, null = True, blank = True)
+    # pelaksanaPekerjaan = models.ManyToManyField(Worker, blank=True)
     timestamp = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):

@@ -7,8 +7,11 @@ document.addEventListener('DOMContentLoaded', function () {
         // Fetch data from the form
         const formData = new FormData(editForm);
 
+        const submitUrl = editForm.getAttribute('action')
+        console.log(submitUrl)
+
         // Make an asynchronous POST request
-        fetch(editForm.action, {
+        fetch(submitUrl, {
             method: 'POST',
             body: formData,
         })
