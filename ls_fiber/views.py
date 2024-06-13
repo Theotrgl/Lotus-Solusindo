@@ -281,9 +281,13 @@ class add_job_mobile(generics.CreateAPIView):
         serializer.validated_data['client'] = client
 
         # Ensure pelaksanaPekerjaan is passed as a list
-        pelaksana_pekerjaan = self.request.data.getlist('pelaksanaPekerjaan')
-        serializer.validated_data['pelaksanaPekerjaan'] = ", ".join(pelaksana_pekerjaan)
+        # pelaksana_pekerjaan = self.request.data.getlist('pelaksanaPekerjaan')
+        # serializer.validated_data['pelaksanaPekerjaan'] = ", ".join(pelaksana_pekerjaan)
 
+        pelaksana_pekerjaan_ids = self.request.data.getlist('pelaksanaPekerjaan')
+        workers = Worker.objects.filter(id__in=pelaksana_pekerjaan_ids)
+        serializer.validated_data['pelaksanaPekerjaan'] = workers
+        
         # Handle file uploads
         lampiran = self.request.FILES.get('lampiran')
         if lampiran:
