@@ -69,8 +69,8 @@ class JobDetail(models.Model):
     jamSelesai = models.TimeField(null = True)
     lampiran = models.ImageField(upload_to='fiber_photos/', null=True)
     lampiran_og = models.ImageField(upload_to = 'fiber_photos/', null=True)
-    pelaksanaPekerjaan = models.TextField(max_length = 1000, null = True, blank = True)
-    # pelaksanaPekerjaan = models.ManyToManyField(Worker, blank=True)
+    # pelaksanaPekerjaan = models.TextField(max_length = 1000, null = True, blank = True)
+    pelaksanaPekerjaan = models.ManyToManyField(Worker, related_name='jobs', blank=True)
     timestamp = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
