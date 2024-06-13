@@ -1,4 +1,4 @@
-{% extends 'base.html' %}{% load auth_extras %} {% load custom_filters %}
+{% extends 'base.html' %}{% load auth_extras %}{% load custom_filters %}
 
 <html>
   <head>
@@ -16,21 +16,21 @@
         <div class="form-inline mb-2">
           <select id="columnFilter" class="form-control btn-info">
             <option value="1">Timestamp</option>
-            <option value="2">Sender</option>
-            <option value="3">Client</option>
-            <option value="4">Tanggal</option>
-            <option value="5">Jenis Pekerjaan</option>
-            <option value="6">Kategori Pekerjaan</option>
-            <option value="7">Jenis Layanan</option>
-            <option value="8">Action</option>
-            <option value="9">Keterangan</option>
-            <option value="10">Hasil</option>
-            <option value="11">Perangkat Install</option>
-            <option value="12">Perangkat Dismantle</option>
-            <option value="13">Jam Mulai</option>
-            <option value="14">Jam Selesai</option>
-            <option value="15">Worker</option>
-            <!-- Add more options for additional columns -->
+            <option value="2">ID</option>
+            <option value="3">Sender</option>
+            <option value="4">Client</option>
+            <option value="5">Tanggal</option>
+            <option value="6">Jenis Pekerjaan</option>
+            <option value="7">Kategori Pekerjaan</option>
+            <option value="8">Jenis Layanan</option>
+            <option value="9">Action</option>
+            <option value="10">Keterangan</option>
+            <option value="11">Hasil</option>
+            <option value="12">Perangkat Install</option>
+            <option value="13">Perangkat Dismantle</option>
+            <option value="14">Jam Mulai</option>
+            <option value="15">Jam Selesai</option>
+            <option value="16">Worker</option>
           </select>
           <input
             type="text"
@@ -101,22 +101,7 @@
           </select>
 
           <button id="resetButton" class="btn btn-secondary ml-2">Reset</button>
-        </div>
-
-        <div class="custom-container container mb-2 d-flex">
-          <p class="mr-3">
-            Total Berat:
-            <span class="font-weight-bold" id="totalBerat"></span> Kg
-          </p>
-          <p class="mr-3">
-            Total Reject:
-            <span class="font-weight-bold" id="totalReject"></span> Kg
-          </p>
-          <p class="mr-3">
-            Jumlah Pengiriman:
-            <span class="font-weight-bold" id="uniquePlatCount"></span>
-          </p> -->
-        <!-- </div> -->
+        </div> -->
 
         <thead class="thead-light">
           <tr>
@@ -254,26 +239,6 @@
                     className: "btn-danger",
                     action: deleteSelectedRows,
                   },
-                  {
-                    text: "{% if request.user|has_group:'Admin' or request.user|has_group:'GA' %} Complete {% endif %}",
-                    className: "btn-success",
-                    action: completeRows,
-                    init: function (api, node, config) {
-                      if (isAdmin === "False" && isGA === "False") {
-                        $(node).addClass("d-none");
-                      }
-                    },
-                  },
-                  {
-                    text: "{% if request.user|has_group:'Admin' or request.user|has_group:'GA' %} Un-Complete {% endif %}",
-                    className: "btn-warning",
-                    action: completeRows,
-                    init: function (api, node, config) {
-                      if (isAdmin === "False" && isGA === "False") {
-                        $(node).addClass("d-none");
-                      }
-                    },
-                  },
                   { extend: "colvis", className: "btn-info" },
                 ],
                 dom: {
@@ -329,95 +294,6 @@
           });
         }
       }
-
-      function completeRows() {
-        if (!table) {
-          console.error("Table is not initialized.");
-          return;
-        }
-        var selectedIDs = table
-          .rows(".selected")
-          .data()
-          .toArray()
-          .map((row) => row[1]);
-        console.log(selectedIDs);
-        selectedIDs.forEach(function (value) {
-          console.log("selected_ids[]:", value);
-        });
-        if (selectedIDs.length === 0) {
-          alert("Please select at least one row to complete.");
-          return;
-        }
-
-        if (confirm("Are you sure you want to complete the selected rows?")) {
-          const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0]
-            .value;
-          $.ajax({
-            url: '{% url "complete_selected_rows" %}',
-            type: "POST",
-            data: { selected_ids: selectedIDs, csrfmiddlewaretoken: csrfToken },
-            dataType: "json",
-            success: function (response) {
-              if (response.success) {
-                // Reload or update the table after successful deletion
-                location.reload(); // Assuming you're using AJAX to populate the table
-                // Optionally, provide feedback to the user
-                alert("Selected rows completed.");
-              } else {
-                alert("Error completing selected rows: " + response.error);
-              }
-            },
-            error: function (xhr, status, error) {
-              alert("Error completing selected rows: " + error);
-            },
-          });
-        }
-      }
-
-      function completeRows() {
-        if (!table) {
-          console.error("Table is not initialized.");
-          return;
-        }
-        var selectedIDs = table
-          .rows(".selected")
-          .data()
-          .toArray()
-          .map((row) => row[1]);
-        console.log(selectedIDs);
-        selectedIDs.forEach(function (value) {
-          console.log("selected_ids[]:", value);
-        });
-        if (selectedIDs.length === 0) {
-          alert("Please select at least one row to un-complete.");
-          return;
-        }
-
-        if (confirm("Are you sure you want to un-complete the selected rows?")) {
-          const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0]
-            .value;
-          $.ajax({
-            url: '{% url "uncomplete_selected_rows" %}',
-            type: "POST",
-            data: { selected_ids: selectedIDs, csrfmiddlewaretoken: csrfToken },
-            dataType: "json",
-            success: function (response) {
-              if (response.success) {
-                // Reload or update the table after successful deletion
-                location.reload(); // Assuming you're using AJAX to populate the table
-                // Optionally, provide feedback to the user
-                alert("Selected rows un-completed.");
-              } else {
-                alert("Error un-completing selected rows: " + response.error);
-              }
-            },
-            error: function (xhr, status, error) {
-              alert("Error un-completing selected rows: " + error);
-            },
-          });
-        }
-      }
-
 
       $(document).ready(function () {
         initializeDataTable();

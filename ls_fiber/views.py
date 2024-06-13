@@ -1,19 +1,14 @@
 # Standard library imports
 import os
-import json
 import uuid
 from datetime import datetime, timedelta, timezone
 
 # Third-party imports
-from itertools import groupby
-from operator import itemgetter
-from PIL import Image, ImageFile
-from collections import defaultdict
+from PIL import Image
 from django.urls import reverse
 from rest_framework import generics, status
 from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.decorators import api_view, permission_classes
@@ -26,17 +21,15 @@ from page1.models import Provinsi, Kota, Kecamatan, Kelurahan, KodePos
 
 # Django imports
 from django.conf import settings
-from django.db import transaction
 from django.http import JsonResponse
-from django.db.models import Count, Sum
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-from django.db.models.functions import ExtractDay, ExtractMonth, ExtractYear, Upper
 
-# Create your views here.
-# -------------------- Common Functions --------------------#
+
+
+# -------------------- Common Functions -------------------- #
 def delete_selected_rows(request, model, key):
     if request.method == 'POST':
         selected_ids = request.POST.getlist('selected_ids[]')  # Assuming you're sending an array of selected IDs
@@ -147,6 +140,40 @@ def edit_entity(request, entity_model, entity_form, entity_id_field, entity_id):
 
     return render(request, 'edit_entity.html', {'form': form})
 
+def process_image(image, is_original):
+    upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    img = Image.open(image)
+
+    # Generate a unique identifier
+    unique_id = str(uuid.uuid4())[:8]  # Use the first 8 characters of a UUID
+    
+    # Strip file extension from the image filename
+    image_name_without_extension, extension = os.path.splitext(image.name)
+    
+    # Resize the image
+    if is_original:
+        resized_img = img.resize((500, 500))
+    else:
+        resized_img = img.resize((100, 100))
+    
+    # Construct the resized image name
+    if is_original:
+        resized_image_name = f"original-{upload_date}-{unique_id}-{extension}"
+    else:
+        resized_image_name = f"resized-{upload_date}-{unique_id}-{extension}"
+    
+    # Save the resized image
+    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'fiber_photos', resized_image_name)
+    resized_img.save(resized_image_path)
+
+    relative_path = os.path.relpath(resized_image_path, settings.MEDIA_ROOT )
+    
+    return relative_path
+
+
+# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #
+# --------------- MOBILE API --------------- #
+# Authentication
 @api_view(['POST'])
 def login_user(request):
     username = request.data.get('username')
@@ -166,6 +193,19 @@ def logout_user(request):
     request.user.auth_token.delete()
     return Response(status=status.HTTP_200_OK)
 
+@api_view(['GET'])
+def check_token(request, user_id):
+    try:
+        user = User.objects.get(pk=user_id)
+        try:
+            user_token = Token.objects.get(user=user)
+            return Response({"token": user_token.key}, status=status.HTTP_200_OK)
+        except Token.DoesNotExist:
+            return Response({"token": ""}, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+
+# Client Functions
 class add_client_mobile(generics.CreateAPIView):
     serializer_class = ClientSerializer
 
@@ -210,6 +250,19 @@ class add_client_address_mobile(generics.CreateAPIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Worker Functions
+class add_worker_mobile(generics.CreateAPIView):
+    serializer_class = WorkerSerializer
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            worker = serializer.save()
+            return Response({'worker_id': worker.id}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# Main Job Functions
 class add_job_mobile(generics.CreateAPIView):
     serializer_class = JobDetailSerializer
     parser_classes = (MultiPartParser, FormParser)
@@ -268,6 +321,7 @@ class add_job_mobile(generics.CreateAPIView):
         
         return super().post(request, *args, **kwargs)
 
+# Fetching Functions
 @api_view(['GET'])
 def fetch_client_list(request):
     clients = Client.objects.all()
@@ -277,16 +331,6 @@ def fetch_client_list(request):
 class ClientListAPIView(generics.ListAPIView):
     serializer_class = ClientSerializer
     queryset = Client.objects.all()
-
-class add_worker_mobile(generics.CreateAPIView):
-    serializer_class = WorkerSerializer
-    
-    def post(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            worker = serializer.save()
-            return Response({'worker_id': worker.id}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 def fetch_worker_list(request):
@@ -326,6 +370,9 @@ class KodePosListView(generics.ListAPIView):
         kelurahan_id = self.kwargs['kelurahan_id']
         return KodePos.objects.filter(kelurahan_id=kelurahan_id)
       
+
+# -+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+- #
+# --------------- MAIN FIBER FUNCTIONS --------------- #
 @login_required
 def display_fiber(request):
     start_date_str = request.GET.get('start_date')
@@ -362,56 +409,34 @@ def display_lampiran(request, url):
 def fiber_detail(request, id):
     return entity_detail(request, JobDetail, JobForm, 'id', id, 'Fiber/fiber_detail.html')
 
-def process_image(image, is_original):
-    upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    img = Image.open(image)
+@login_required
+def edit_fiber(request, id):
+    entity = get_object_or_404(JobDetail,id = id)
+    
+    if request.method == 'POST':
+        form = JobForm(request.POST, request.FILES, instance=entity)
+        
+        if form.is_valid():
+            foto = request.FILES.get('lampiran')
+            og_foto = request.FILES.get('lampiran_og')
 
-    # Generate a unique identifier
-    unique_id = str(uuid.uuid4())[:8]  # Use the first 8 characters of a UUID
-    
-    # Strip file extension from the image filename
-    image_name_without_extension, extension = os.path.splitext(image.name)
-    
-    # Resize the image
-    if is_original:
-        resized_img = img.resize((500, 500))
+            if foto:
+                resized_foto_path = process_image(foto, False)
+                form.instance.lampiran = resized_foto_path
+            if og_foto:
+                resized_og_foto_path = process_image(og_foto, True)
+                form.instance.lampiran_og = resized_og_foto_path
+
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
     else:
-        resized_img = img.resize((100, 100))
-    
-    # Construct the resized image name
-    if is_original:
-        resized_image_name = f"original-{upload_date}-{unique_id}-{extension}"
-    else:
-        resized_image_name = f"resized-{upload_date}-{unique_id}-{extension}"
-    
-    # Save the resized image
-    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'report_photos', resized_image_name)
-    resized_img.save(resized_image_path)
-
-    relative_path = os.path.relpath(resized_image_path, settings.MEDIA_ROOT )
-    
-    return relative_path
-
+        form = JobForm(instance=entity)
 
 @login_required
 def delete_selected_rows_fiber(request):
     return delete_selected_rows(request, JobDetail, 'id')
-
-@login_required
-def delete_selected_rows_client(request):
-    return delete_selected_rows(request, Client, 'id')
-
-@api_view(['GET'])
-def check_token(request, user_id):
-    try:
-        user = User.objects.get(pk=user_id)
-        try:
-            user_token = Token.objects.get(user=user)
-            return Response({"token": user_token.key}, status=status.HTTP_200_OK)
-        except Token.DoesNotExist:
-            return Response({"token": ""}, status=status.HTTP_200_OK)
-    except User.DoesNotExist:
-        return Response({"error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
 
 @login_required
 def add_fiber(request, initial=None):
@@ -448,67 +473,11 @@ def add_fiber(request, initial=None):
     return render(request, 'Fiber/add_fiber.html', {'entity_form': entity_form_instance})
 
 @login_required
-def edit_fiber(request, id):
-    entity = get_object_or_404(JobDetail,id = id)
-
-    if request.method == 'POST':
-        form = JobForm(request.POST, request.FILES, instance=entity)
-        
-        if form.is_valid():
-            # Check if a new image file is provided
-            foto = request.FILES.get('lampiran')
-            og_foto = request.FILES.get('lampiran_og')
-
-            if foto:
-                resized_foto_path = process_image(foto, False)
-                form.instance.foto = resized_foto_path
-            if og_foto:
-                resized_og_foto_path = process_image(og_foto, True)
-                form.instance.og_foto = resized_og_foto_path
-
-            form.save()
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors})
-    else:
-        form = JobForm(instance=entity)
-    
-    return render(request, "Fiber/edit_fiber.html", {'form': form})
-
-def process_image(image, is_original):
-    upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
-    img = Image.open(image)
-
-    # Generate a unique identifier
-    unique_id = str(uuid.uuid4())[:8]  # Use the first 8 characters of a UUID
-    
-    # Strip file extension from the image filename
-    image_name_without_extension, extension = os.path.splitext(image.name)
-    
-    # Resize the image
-    if is_original:
-        resized_img = img.resize((500, 500))
-    else:
-        resized_img = img.resize((100, 100))
-    
-    # Construct the resized image name
-    if is_original:
-        resized_image_name = f"original-{upload_date}-{unique_id}-{extension}"
-    else:
-        resized_image_name = f"resized-{upload_date}-{unique_id}-{extension}"
-    
-    # Save the resized image
-    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'fiber_photos', resized_image_name)
-    resized_img.save(resized_image_path)
-
-    relative_path = os.path.relpath(resized_image_path, settings.MEDIA_ROOT )
-    
-    return relative_path
-
-@login_required
 def delete_fiber(request, id):
     return delete_entity(request, JobDetail, 'id', id)
 
+
+# --------------- CLIENT FUNCTIONS --------------- #
 @login_required
 def display_fiber_client(request):
     return display_entities(request, Client, 'Client/display_client.html')
@@ -532,6 +501,11 @@ def delete_client(request, id):
     return delete_entity(request, Client, 'id', id)
 
 @login_required
+def delete_selected_rows_client(request):
+    return delete_selected_rows(request, Client, 'id')
+
+# Client PIC
+@login_required
 def edit_client_pic(request, id):
     pic = get_object_or_404(ClientPIC, id=id)
     form = ClientPICForm(request.POST or None, instance=pic)
@@ -550,3 +524,57 @@ def add_client_pic(request, id):
 @login_required
 def delete_client_pic(request, id):
     return delete_entity(request, ClientPIC, 'id', id)
+
+
+# --------------- WORKER FUNCTIONS --------------- #
+@login_required
+def display_worker(request):
+    return display_entities(request, Worker, 'Worker/display_worker.html')
+
+@login_required
+def worker_detail(request, id):
+    return entity_detail(request, Worker, WorkerForm, 'id', id, 'Worker/worker_detail.html')
+
+@login_required
+def edit_worker(request, id):
+    entity = get_object_or_404(Worker,id = id)
+    
+    if request.method == 'POST':
+        form = WorkerForm(request.POST, request.FILES, instance=entity)
+        
+        if form.is_valid():
+            form.save()
+            return JsonResponse({'success': True})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    else:
+        form = WorkerForm(instance=entity)
+    
+    return render(request, "/Fiber/edit_worker.html", {'form': form})
+
+@login_required
+def delete_worker(request, id):
+    return delete_entity(request, Worker, 'id', id)
+
+@login_required
+def add_worker(request, initial=None):
+    entity_form_instance = WorkerForm(request.POST or None)
+    if request.method == 'POST':
+        form = WorkerForm(request.POST)
+        if form.is_valid():
+            worker = form.save(commit=False)
+            worker.save()
+            return redirect('display_worker')
+    else:
+        print(initial)
+        if (initial):
+            form = (WorkerForm(initial=initial))
+            entity_form_instance = form
+        else: 
+            form = WorkerForm()
+
+    return render(request, 'Worker/add_worker.html', {'entity_form': entity_form_instance})
+
+@login_required
+def delete_selected_rows_worker(request):
+    return delete_selected_rows(request, Worker, 'id')

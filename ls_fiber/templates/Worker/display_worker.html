@@ -1,0 +1,240 @@
+{% extends 'base.html' %}{% load auth_extras %}{% load custom_filters %}
+
+<html>
+  <head>
+    {% block title %}Fiber Optic Worker Data Table{% endblock %}
+  </head>
+  <body>
+    {% block content %}
+    <h1>Fiber Optic Worker Data Table</h1>
+    {% csrf_token %}
+    <div>
+      <table
+        id="fiberTable"
+        class="table table-bordered table-striped w-100 table-lg table-responsive-lg"
+      >
+        <div class="form-inline mb-2">
+          <select id="columnFilter" class="form-control btn-info">
+            <option value="1">ID</option>
+            <option value="2">Nama</option>
+            <option value="3">No KTP</option>
+            <option value="4">No Telpon</option>
+            <option value="5">No Rekening</option>
+          </select>
+          <input
+            type="text"
+            id="columnSearch"
+            placeholder="Search in selected column"
+            class="form-control m-1"
+            style="width: 15%"
+          />
+          <button id="searchButton" class="btn btn-primary mr-1">Search</button>
+          <button id="resetButtonCol" class="btn btn-secondary mr-2">
+            Reset
+          </button>
+        <thead class="thead-light">
+          <tr>
+            <th>ID</th>
+            <th>Nama</th>
+            <th>No KTP</th>
+            <th>No Telpon</th>
+            <th>No Rekening</th>
+            <th>Ubah</th>
+          </tr>
+        </thead>
+        <tbody class="tbody">
+          {% for worker in entities %}
+          <tr>
+            <td>{{ worker.id }}</td>
+            <td>{{ worker.nama }}</td>
+            <td>{{ worker.ktp }}</td>
+            <td>{{ worker.telponWorker }}</td>
+            <td>{{ worker.rekening }}</td>
+            <td>
+              <a href="{% url 'worker_detail' worker.id %}">View</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <script>
+      var table;
+      function initializeDataTable() {
+        var isAdmin = "{{ request.user|has_group:'Admin' }}";
+        var isGA = "{{ request.user|has_group:'GA' }}";
+        table = new DataTable("#fiberTable", {
+          select: {
+            style: "multi",
+          },
+          lengthMenu: [
+            [10, 25, 50, 100, -1],
+            [10, 25, 50, 100, "All"],
+          ],
+          layout: {
+            top2Start: {
+              buttons: {
+                buttons: [
+                  {
+                    text: "Delete Rows",
+                    className: "btn-danger",
+                    action: deleteSelectedRows,
+                  },
+                  { extend: "colvis", className: "btn-info" },
+                ],
+                dom: {
+                  button: {
+                    className: "btn",
+                  },
+                },
+              },
+            },
+            // top2Start:'pageLength'
+          },
+        });
+      }
+
+      function deleteSelectedRows() {
+        if (!table) {
+          console.error("Table is not initialized.");
+          return;
+        }
+        var selectedIDs = table
+          .rows(".selected")
+          .data()
+          .toArray()
+          .map((row) => row[0]); // Get SKUs of selected rows using DataTables API
+        selectedIDs.forEach(function (value) {
+          console.log("selected_ids[]:", value);
+        });
+        if (selectedIDs.length === 0) {
+          alert("Please select at least one row to delete.");
+          return;
+        }
+
+        if (confirm("Are you sure you want to delete the selected rows?")) {
+          const csrfToken = document.getElementsByName("csrfmiddlewaretoken")[0]
+            .value;
+          $.ajax({
+            url: '{% url "delete_selected_rows_worker" %}',
+            type: "POST",
+            data: { selected_ids: selectedIDs, csrfmiddlewaretoken: csrfToken },
+            dataType: "json",
+            success: function (response) {
+              if (response.success) {
+                // Reload or update the table after successful deletion
+                location.reload();
+                alert("Selected rows deleted successfully.");
+              } else {
+                alert("Error deleting selected rows: " + response.error);
+              }
+            },
+            error: function (xhr, status, error) {
+              alert("Error deleting selected rows: " + error);
+            },
+          });
+        }
+      }
+
+      $(document).ready(function () {
+        initializeDataTable();
+
+        var searchTimeout;
+
+        $(".dt-search input")
+          .off()
+          .on("keyup", function () {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(updateStatsAfterSearch, 1000);
+          });
+
+        $("#filterDuplicatesButton").on("click", function () {
+          filterDuplicates();
+        });
+
+        function filterDuplicates() {
+          var rows = table.rows().nodes(); // Get all rows in the DataTable
+
+          var uniqueRows = {}; // Object to store unique rows
+          var allDuplicateRows = []; // Array to store all occurrences of duplicate row nodes
+
+          // Iterate through each row
+          rows.each(function (index, row) {
+            var rowData = table.row(row).data(); // Get data for the current row
+            var rowDataStr = JSON.stringify(excludeColumns(rowData)); // Convert row data to a string for comparison
+
+            // Check if the row data already exists in the uniqueRows object
+            if (uniqueRows[rowDataStr]) {
+              // Duplicate row found, add both the current row index and the original reference row index to allDuplicateRows array
+              allDuplicateRows.push(index);
+              allDuplicateRows.push(uniqueRows[rowDataStr]);
+              // Include the current row index as well
+              allDuplicateRows.push(index);
+            } else {
+              // Unique row, add it to the uniqueRows object
+              uniqueRows[rowDataStr] = index;
+            }
+          });
+
+          // Hide all rows
+          table.rows().nodes().to$().hide();
+
+          // Show all occurrences of duplicate rows and their corresponding original reference rows
+          table.rows(allDuplicateRows).nodes().to$().show();
+
+          table.draw();
+        }
+
+        // Function to exclude multiple columns from row data
+        function excludeColumns(rowData) {
+          var excludedColumns = [0, 1, 2, 14, 15]; // Specify the indices of columns to be excluded (e.g., column index 3 and 5)
+          var rowDataCopy = rowData.slice(); // Create a copy of the row data array
+
+          // Set excluded column values to null
+          for (var i = 0; i < excludedColumns.length; i++) {
+            var columnIndex = excludedColumns[i];
+            rowDataCopy[columnIndex] = null;
+          }
+
+          return rowDataCopy;
+        }
+
+        $("#resetFilterDuplicatesBtn").on("click", function () {
+          resetFilterDuplicates();
+        });
+
+        // Function to reset check duplicates button
+        function resetFilterDuplicates() {
+          // Show all rows
+          table.rows().nodes().to$().show();
+
+          table.draw();
+        }
+
+        $("#searchButton").on("click", function () {
+          columnSearch();
+        });
+
+        $("#resetButtonCol").on("click", function () {
+          resetSearch();
+        });
+
+        // Function to perform column-specific search
+        function columnSearch() {
+          var columnIndex = $("#columnFilter").val(); // Get the index of the selected column
+          var searchValue = $("#columnSearch").val().trim(); // Get the value of the search input and remove leading/trailing whitespace
+          table.column(columnIndex).search(searchValue).draw(); // Apply search to the selected column
+        }
+
+        // Function to reset search
+        function resetSearch() {
+          $("#columnSearch").val(""); // Clear the search input
+          table.search("").columns().search("").draw(); // Clear all column-specific searches and redraw the table
+          calculateStats();
+        }
+      });
+    </script>
+    <a href="/fiber/add_worker">Add Worker</a>
+    {% endblock %}
+  </body>
+</html>
