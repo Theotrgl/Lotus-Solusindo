@@ -229,7 +229,7 @@ class add_job_mobile(generics.CreateAPIView):
 
         # Ensure pelaksanaPekerjaan is passed as a list
         pelaksana_pekerjaan = self.request.data.getlist('pelaksanaPekerjaan')
-        serializer.validated_data['pelaksanaPekerjaan'] = pelaksana_pekerjaan
+        serializer.validated_data['pelaksanaPekerjaan'] = ", ".join(pelaksana_pekerjaan)
 
         # Handle file uploads
         lampiran = self.request.FILES.get('lampiran')
@@ -476,7 +476,7 @@ def edit_fiber(request, id):
     entity = get_object_or_404(JobDetail,id = id)
 
     if request.method == 'POST':
-        form = JobDetail(request.POST, request.FILES, instance=entity)
+        form = JobForm(request.POST, request.FILES, instance=entity)
         
         if form.is_valid():
             # Check if a new image file is provided
@@ -497,7 +497,7 @@ def edit_fiber(request, id):
     else:
         form = JobForm(instance=entity)
     
-    return render(request, "/fiber/edit_fiber.html", {'form': form})
+    return render(request, "Fiber/edit_fiber.html", {'form': form})
 
 def process_image(image, is_original):
     upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
@@ -522,7 +522,7 @@ def process_image(image, is_original):
         resized_image_name = f"resized-{upload_date}-{unique_id}-{extension}"
     
     # Save the resized image
-    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'report_photos', resized_image_name)
+    resized_image_path = os.path.join(settings.MEDIA_ROOT, 'fiber_photos', resized_image_name)
     resized_img.save(resized_image_path)
 
     relative_path = os.path.relpath(resized_image_path, settings.MEDIA_ROOT )
@@ -546,6 +546,7 @@ def client_detail(request, id):
 @login_required
 def add_client(request):
     return add_entity_view(request, ClientForm, 'Client/add_client.html', 'display_fiber_client')
+
 @login_required
 def edit_client(request, id):
     return edit_entity(request, Client, ClientForm, 'id', id)
