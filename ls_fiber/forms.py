@@ -56,7 +56,7 @@ class ClientForm(forms.ModelForm):
         fields = '__all__'
         widgets = {
             'namaPelanggan' : forms.TextInput(attrs={'class' : 'form-control'}),
-            'nomorTelponPelanggan' : forms.TextInput(attrs={'class':'form-control'})
+            'nomorTelponPelanggan' : RegionalPhoneNumberWidget(region='ID', attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
         }
     
 class ClientPICForm(forms.ModelForm):
@@ -65,10 +65,12 @@ class ClientPICForm(forms.ModelForm):
         fields = '__all__'
         exclude = ['client_id']
         widgets = {
-            'client' : Select2Widget(attrs={'class' : 'form-control'}),
-            'nama' : forms.TextInput(attrs={'class':'form-control'}),
-            'telp' : RegionalPhoneNumberWidget(attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
-            'email' : forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'username@lotuslestari.co.id'})
+            'namaPIC' : forms.TextInput(attrs={'class':'form-control'}),
+            'nomorTelponPIC' : RegionalPhoneNumberWidget(region='ID', attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
+        }
+        labels = {
+            'namaPIC': 'Nama PIC',
+            'nomorTelponPIC': 'No Telpon PIC',
         }
 
 class ClientAlamatForm(forms.ModelForm):
@@ -100,7 +102,7 @@ class WorkerForm(forms.ModelForm):
         widgets = {
             'nama' : forms.TextInput(attrs={'class': 'form-control'}),
             'ktp' : forms.NumberInput(attrs={'class': 'form-control'}),
-            'telponWorker' : RegionalPhoneNumberWidget(attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
+            'telponWorker' : RegionalPhoneNumberWidget(region='ID', attrs={'class': 'form-control', 'placeholder': '081-234-567-890'}),
             'rekening' : forms.NumberInput(attrs={'class': 'form-control'}),
         }
         labels = {

@@ -120,6 +120,9 @@
               {% if request.user|has_group:'Admin' %}
               <li><a class="sidebar-a" href="/fiber/display_fiber_client">Client</a></li>
               {% endif %}
+              {% if request.user|has_group:'Admin' %}
+              <li><a class="sidebar-a" href="/fiber/display_worker">Worker</a></li>
+              {% endif %}
           </ul>
         </li>
         {% endif %}

@@ -27,7 +27,7 @@
             id="deleteForm"
             method="post"
             action="{% url 'delete_worker' entity.id %}"
-            onclick="return confirmDelete('/fiber/display_worker');"
+            onclick="return confirmDelete('/fiber/display_worker/');"
             class="mt-2"
           >
             {% csrf_token %}

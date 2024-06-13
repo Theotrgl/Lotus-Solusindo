@@ -36,7 +36,7 @@
                     <button type="submit" class="btn btn-primary">Update</button>
                 </form>
                 <form id="deleteForm" method="post" action="{% url 'delete_client' entity.id %}"
-                    onclick="return confirmDelete('/display_client');" class="mt-2">
+                    onclick="return confirmDelete('/fiber/display_fiber_client/');" class="mt-2">
                     {% csrf_token %}
                     <button type="button" class="btn btn-danger">Delete</button>
                 </form>

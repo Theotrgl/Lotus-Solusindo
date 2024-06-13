@@ -33,6 +33,7 @@ urlpatterns = [
     path('display_lampiran/<path:url>', display_lampiran, name="display_lampiran"),
     path('add_fiber/',add_fiber,name='add_fiber'),
     # Client Urls
+    path('add_client/', add_client, name="add_client"),
     path('display_fiber_client/', display_fiber_client, name="display_fiber_client"),
     path('delete_selected_rows_client/', delete_selected_rows_client, name='delete_selected_rows_client'),
     path('client_detail/<int:id>/', client_detail, name="client_detail"),
