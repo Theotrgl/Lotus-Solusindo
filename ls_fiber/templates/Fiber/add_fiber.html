@@ -196,6 +196,15 @@
           </div>
           <div class="col-md-6">
               <div class="form-group">
+                {{ entity_form.tanggal.label_tag }}
+                {{ entity_form.tanggal }}
+                {% for error in entity_form.tanggal.errors %}
+                <span class="text-danger">{{ error }}</span>
+                {% endfor %}
+              </div>
+          </div>
+          <div class="col-md-6">
+              <div class="form-group">
                 {{ entity_form.lampiran.label_tag }}
                 {{ entity_form.lampiran }}
                 {% for error in entity_form.lampiran.errors %}

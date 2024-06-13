@@ -362,33 +362,6 @@ def display_lampiran(request, url):
 def fiber_detail(request, id):
     return entity_detail(request, JobDetail, JobForm, 'id', id, 'Fiber/fiber_detail.html')
 
-@login_required
-def edit_job(request, id):
-    entity = get_object_or_404(JobDetail,id = id)
-    
-    if request.method == 'POST':
-        form = JobForm(request.POST, request.FILES, instance=entity)
-        
-        if form.is_valid():
-            foto = request.FILES.get('lampiran')
-            og_foto = request.FILES.get('lampiran_og')
-
-            if foto:
-                resized_foto_path = process_image(foto, False)
-                form.instance.lampiran = resized_foto_path
-            if og_foto:
-                resized_og_foto_path = process_image(og_foto, True)
-                form.instance.lampiran_og = resized_og_foto_path
-
-            form.save()
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'errors': form.errors})
-    else:
-        form = JobDetail(instance=entity)
-    
-    return render(request, "/Fiber/edit_job.html", {'form': form})
-
 def process_image(image, is_original):
     upload_date = datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
     img = Image.open(image)
@@ -445,22 +418,25 @@ def add_fiber(request, initial=None):
     entity_form_instance = JobForm(request.POST or None, request.FILES or None)
     if request.method == 'POST':
         form = JobForm(request.POST, request.FILES)
+        print(request.POST)  # Print POST data for debugging
+        print(request.FILES)  # Print FILES data for debugging
         if form.is_valid():
-            report = form.save(commit=False)
-            foto = request.FILES.get('lampiran')
-            og_foto = request.FILES.get('lampiran_og')
+            job = form.save(commit=False)
+            lampiran = request.FILES.get('lampiran')
+            lampiran_og = request.FILES.get('lampiran_og')
 
-            if foto:
-                resized_foto_path = process_image(foto, False)
-                form.instance.foto = resized_foto_path
-                report.save()
-            if og_foto:
-                resized_og_foto_path = process_image(og_foto, True)
-                form.instance.og_foto = resized_og_foto_path
-                report.save()
+            if lampiran:
+                resized_lampiran_path = process_image(lampiran, False)
+                job.lampiran = resized_lampiran_path
 
-            report.save()
+            if lampiran_og:
+                resized_lampiran_og_path = process_image(lampiran_og, True)
+                job.lampiran_og = resized_lampiran_og_path
+
+            job.save()
             return redirect('display_fiber')
+        else:
+            print(form.errors)  # Print form errors for debugging
     else:
         print(initial)
         if (initial):

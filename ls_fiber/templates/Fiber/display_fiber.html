@@ -174,11 +174,21 @@
             <td>{{ fiber.perangkatDismantle }}</td>
             <td>{{ fiber.jamMulai|date:"H:i:s" }}</td>
             <td>{{ fiber.jamSelesai|date:"H:i:s" }}</td>
-            <td>{{ fiber.pelaksanaPekerjaan }}</td>
+            <td>
+              {% if fiber.pelaksanaPekerjaan.all %}
+                  <ul>
+                      {% for worker in fiber.pelaksanaPekerjaan.all %}
+                          <li>{{ worker.nama }}</li>
+                      {% endfor %}
+                  </ul>
+              {% else %}
+                  No workers assigned
+              {% endif %}
+          </td>
             <td>
               {% if fiber.lampiran_og and fiber.lampiran %}
               <a
-                href="{% url 'display_lampiran' fiber.lampiran.url %}"
+                href="{% url 'display_lampiran' fiber.lampiran_og.url %}"
                 target="_blank"
                 ><img src="{{ fiber.lampiran.url }}" alt="{{ fiber.id }}"
               /></a>

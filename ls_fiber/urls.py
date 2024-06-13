@@ -19,7 +19,6 @@ urlpatterns = [
     path('display_fiber_client/', display_fiber_client, name="display_fiber_client"),
     path('fiber_detail/<int:id>/', fiber_detail, name="fiber_detail"),
     path('client_detail/<int:id>/', client_detail, name="client_detail"),
-    path('edit_job/<int:id>/', edit_job, name='edit_job'),
     path('delete_selected_rows_fiber/', delete_selected_rows_fiber, name='delete_selected_rows_fiber'),
     path('delete_selected_rows_client/', delete_selected_rows_client, name='delete_selected_rows_client'),
     path('delete_fiber/<int:id>/', delete_fiber, name='delete_fiber'),
